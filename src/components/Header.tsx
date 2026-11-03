@@ -11,8 +11,8 @@ const NAV: { label: string; target?: string; to?: string }[] = [
   { label: "MENU", target: "menu" },
   { label: "BUILD YOUR BURGER", target: "builder" },
   { label: "SIDES", target: "sides" },
-  { label: "ABOUT", to: "/about" },
-  { label: "CONTACT", to: "/contact" },
+  { label: "ABOUT", target: "about" },
+  { label: "CONTACT", target: "contact" },
 ];
 
 export function Header() {
