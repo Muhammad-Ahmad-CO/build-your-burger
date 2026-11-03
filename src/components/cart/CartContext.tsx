@@ -93,26 +93,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
-  const addBurger = useCallback((name: string, layers: StackLayer[]) => {
-    const layerIds = layers.map((l) => l.ingredientId);
-    const price = layers.reduce((sum, l) => {
-      // price is supplied by caller via layers; computed below instead
-      return sum;
-    }, 0);
-    setItems((prev) => {
-      const fingerprint = layerIds.join(">");
-      const existing = prev.find(
-        (it) => it.kind === "burger" && it.layerIds.join(">") === fingerprint,
-      );
-      if (existing) {
-        return prev.map((it) => (it.key === existing.key ? { ...it, qty: it.qty + 1 } : it));
-      }
-      return [
-        ...prev,
-        { key: `burger-${Date.now()}-${Math.floor(Math.random() * 1e5)}`, kind: "burger", name, layerIds, price: 0, qty: 1 },
-      ];
-    });
-  }, []);
+  const addBurger = useCallback(
+    (name: string, layerIds: string[], unitPrice: number) => {
+      setItems((prev) => {
+        const fingerprint = layerIds.join(">");
+        const existing = prev.find(
+          (it) => it.kind === "burger" && it.layerIds.join(">") === fingerprint,
+        );
+        if (existing) {
+          return prev.map((it) => (it.key === existing.key ? { ...it, qty: it.qty + 1 } : it));
+        }
+        return [
+          ...prev,
+          {
+            key: `burger-${Date.now()}-${Math.floor(Math.random() * 1e5)}`,
+            kind: "burger",
+            name,
+            layerIds,
+            price: unitPrice,
+            qty: 1,
+          },
+        ];
+      });
+    },
+    [],
+  );
 
   const addSide = useCallback((sideId: string, name: string, price: number) => {
     setItems((prev) => {
