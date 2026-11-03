@@ -1,11 +1,8 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Dices, RotateCcw, X } from "lucide-react";
-import { LayerArt } from "@/components/burger/art";
+import { Dices, RotateCcw } from "lucide-react";
 import {
-  CATEGORY_STEPS,
   INGREDIENTS,
-  PRESETS,
   SIDES,
   defaultStack,
   formatRs,
@@ -13,35 +10,153 @@ import {
   insertIndex,
   layersPrice,
   makeLayer,
-  stackHeightLabel,
-  type Category,
   type StackLayer,
 } from "@/components/burger/data";
 import { useCart } from "@/components/cart/CartContext";
 
-type View = "stack" | "counter";
+const LAYER_COLOURS: Record<string, string> = {
+  "bottom-bun": "#E08E24",
+  "top-bun": "#F5A83C",
+  "beef-patty": "#6B3E1E",
+  "chicken-patty": "#E8A13C",
+  "veggie-patty": "#7A8F3A",
+  cheddar: "#FFAD1F",
+  "smoked-cheese": "#E89005",
+  tomato: "#E8473B",
+  lettuce: "#55B33C",
+  onion: "#E58BB0",
+  jalapeno: "#37A24A",
+  pickle: "#97A83B",
+  ketchup: "#E11D2E",
+  mustard: "#F2C200",
+  mayo: "#F5E7BE",
+  "hot-sauce": "#C1121F",
+  "crispy-onions": "#C97B2D",
+  "fried-egg": "#FFFFFF",
+};
 
-function StackArt({ layers, width = 260 }: { layers: StackLayer[]; width?: number }) {
-  // Render top-to-bottom in the DOM so the bottom bun lands at the bottom.
+/** Small food visual for a tray, seen from above — not a side-stack drawing. */
+function TrayVisual({ id }: { id: string }) {
+  if (id === "lettuce") {
+    return (
+      <div className="flex flex-wrap justify-center gap-1" aria-hidden="true">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <span key={i} className="block h-1.5 w-5 rounded-full bg-[#55B33C]" />
+        ))}
+      </div>
+    );
+  }
+  if (id === "tomato") {
+    return (
+      <div className="flex flex-wrap justify-center gap-1" aria-hidden="true">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <span key={i} className="block h-4 w-4 rounded-[3px] bg-[#E8473B]" />
+        ))}
+      </div>
+    );
+  }
+  if (id === "cheddar" || id === "smoked-cheese") {
+    return (
+      <div className="flex flex-wrap justify-center gap-1" aria-hidden="true">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <span
+            key={i}
+            className="block h-4 w-4 rounded-[3px]"
+            style={{ background: LAYER_COLOURS[id] }}
+          />
+        ))}
+      </div>
+    );
+  }
+  if (id === "onion" || id === "jalapeno" || id === "pickle") {
+    return (
+      <div className="flex justify-center gap-1" aria-hidden="true">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <span
+            key={i}
+            className="block h-5 w-5 rounded-full border-2 border-black/10"
+            style={{ background: LAYER_COLOURS[id] }}
+          />
+        ))}
+      </div>
+    );
+  }
+  if (id.endsWith("sauce") || id === "ketchup" || id === "mustard" || id === "mayo") {
+    return (
+      <div className="h-2 w-16 rounded-full" style={{ background: LAYER_COLOURS[id] }} aria-hidden="true" />
+    );
+  }
+  return (
+    <div
+      className="mx-auto h-9 w-16 rounded-full border-2 border-black/10"
+      style={{ background: LAYER_COLOURS[id] ?? "#999" }}
+      aria-hidden="true"
+    />
+  );
+}
+
+/** Top-down burger: layers as concentric rings, top bun outermost. */
+function TopViewBurger({ layers }: { layers: StackLayer[] }) {
   const topDown = [...layers].reverse();
   return (
-    <div className="mx-auto w-full max-w-[300px]" style={{ width }}>
-      {topDown.map((layer) => (
-        <motion.div
-          key={layer.uid}
-          initial={{ y: -24, opacity: 0, scale: 0.96 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="mx-auto -my-[1px] w-full"
-        >
-          <LayerArt id={layer.ingredientId} width={width} />
-        </motion.div>
-      ))}
+    <div className="relative mx-auto h-[240px] w-[240px] sm:h-[280px] sm:w-[280px]">
+      {topDown.map((layer, i) => {
+        const inset = i * 13;
+        const colour = LAYER_COLOURS[layer.ingredientId] ?? "#999";
+        return (
+          <motion.div
+            key={layer.uid}
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="absolute rounded-full border-2 border-black/15 shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
+            style={{ inset, background: colour }}
+          >
+            {layer.ingredientId === "top-bun" && (
+              <span className="absolute inset-0" aria-hidden="true">
+                {[
+                  ["30%", "28%"],
+                  ["55%", "22%"],
+                  ["70%", "45%"],
+                  ["40%", "60%"],
+                  ["62%", "68%"],
+                ].map(([left, top], j) => (
+                  <span
+                    key={j}
+                    className="absolute block h-2 w-1.5 rounded-full bg-[#FFF3D6]"
+                    style={{ left, top }}
+                  />
+                ))}
+              </span>
+            )}
+            {layer.ingredientId === "fried-egg" && (
+              <span
+                className="absolute left-1/2 top-1/2 block h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FFB800]"
+                aria-hidden="true"
+              />
+            )}
+          </motion.div>
+        );
+      })}
       {layers.length === 0 && (
-        <p className="py-10 text-center font-display font-extrabold text-muted-foreground">
-          YOUR BURGER STARTS HERE
+        <p className="absolute inset-0 flex items-center justify-center text-center font-display font-extrabold text-muted-foreground">
+          TAP A TRAY TO START
         </p>
       )}
+    </div>
+  );
+}
+
+function PatternPaper() {
+  return (
+    <div className="pointer-events-none absolute inset-0 grid grid-cols-4 content-start gap-3 overflow-hidden p-3 opacity-25" aria-hidden="true">
+      {Array.from({ length: 16 }).map((_, i) => (
+        <span key={i} className="text-center text-[9px] font-extrabold leading-tight text-primary">
+          DOUBLE
+          <br />
+          GOOD
+        </span>
+      ))}
     </div>
   );
 }
@@ -50,55 +165,38 @@ export function BurgerBuilder() {
   const cart = useCart();
   const reduce = useReducedMotion();
   const [layers, setLayers] = useState<StackLayer[]>(() => defaultStack());
-  const [view, setView] = useState<View>("stack");
-  const [stepIndex, setStepIndex] = useState(0);
-  const [dragOver, setDragOver] = useState(false);
-  const [addedFlash, setAddedFlash] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [lastAddedName, setLastAddedName] = useState("CUSTOM BURGER");
 
-  const step = CATEGORY_STEPS[stepIndex];
   const layerIds = useMemo(() => layers.map((l) => l.ingredientId), [layers]);
   const price = layersPrice(layers);
-  const presetMatch = PRESETS.find((p) => p.layerIds.join(">") === layerIds.join(">"));
   const countOf = (id: string) => layers.filter((l) => l.ingredientId === id).length;
 
-  const addIngredient = (id: string) => {
+  const addIngredient = (id: string) =>
     setLayers((prev) => {
-      const at = insertIndex(prev, id);
       const next = [...prev];
-      next.splice(at, 0, makeLayer(id));
+      next.splice(insertIndex(prev, id), 0, makeLayer(id));
       return next;
     });
-    setAddedFlash(true);
-    window.setTimeout(() => setAddedFlash(false), 1500);
-  };
 
   const toggleIngredient = (id: string) => {
     const ing = ingredientById(id);
-    if (ing.category === "bread") {
-      if (countOf(id) > 0) {
+    if (ing.category === "bread" || countOf(id) === 0) {
+      if (ing.category === "bread" && countOf(id) > 0) {
         setLayers((prev) => prev.filter((l) => l.ingredientId !== id));
       } else {
         addIngredient(id);
       }
       return;
     }
-    if (countOf(id) > 0) {
-      setLayers((prev) => {
-        const idx = prev.map((l) => l.ingredientId).lastIndexOf(id);
-        if (idx < 0) return prev;
-        const next = [...prev];
-        next.splice(idx, 1);
-        return next;
-      });
-    } else {
-      addIngredient(id);
-    }
+    setLayers((prev) => {
+      const idx = prev.map((l) => l.ingredientId).lastIndexOf(id);
+      if (idx < 0) return prev;
+      const next = [...prev];
+      next.splice(idx, 1);
+      return next;
+    });
   };
-
-  const removeLayer = (uid: string) => setLayers((prev) => prev.filter((l) => l.uid !== uid));
-
-  const loadPreset = (ids: string[]) =>
-    setLayers(ids.map((ingredientId, i) => ({ uid: `preset-${Date.now()}-${i}`, ingredientId })));
 
   const clearStack = () =>
     setLayers([
@@ -107,328 +205,252 @@ export function BurgerBuilder() {
     ]);
 
   const randomStack = () => {
-    const pick = (cat: Category) => {
+    const pick = (cat: string) => {
       const opts = INGREDIENTS.filter((i) => i.category === cat);
       return opts[Math.floor(Math.random() * opts.length)].id;
     };
     const veggies = INGREDIENTS.filter((i) => i.category === "veggies");
     const v1 = veggies[Math.floor(Math.random() * veggies.length)].id;
     const v2 = veggies[Math.floor(Math.random() * veggies.length)].id;
-    loadPreset(["bottom-bun", pick("patty"), pick("cheese"), v1, v2, pick("sauce"), "top-bun"]);
+    const ids = ["bottom-bun", pick("patty"), pick("cheese"), v1, v2, pick("sauce"), "top-bun"];
+    setLayers(ids.map((ingredientId, i) => ({ uid: `rand-${Date.now()}-${i}`, ingredientId })));
   };
 
   const addToOrder = () => {
-    cart.addBurger(presetMatch ? presetMatch.name : "CUSTOM BURGER", layerIds, price);
-    cart.setDrawerOpen(true);
-    setLayers(defaultStack());
+    const name = "CUSTOM BURGER";
+    cart.addBurger(name, layerIds, price);
+    setLastAddedName(name);
+    setShowReceipt(true);
   };
 
-  const stepIngredients = INGREDIENTS.filter((i) => i.category === step.category);
-
-  const tile = (id: string, label: string, priceText: string) => {
-    const n = countOf(id);
-    return (
-      <button
-        key={id}
-        type="button"
-        draggable
-        onDragStart={(e) => e.dataTransfer.setData("text/plain", id)}
-        onClick={() => toggleIngredient(id)}
-        aria-label={`${label}, ${priceText}${n > 0 ? `, selected ${n}` : ""}`}
-        className={`relative shrink-0 rounded-3xl border-[3px] border-ink bg-card px-3 py-3 text-center transition-transform hover:-translate-y-1 ${
-          n > 0 ? "ring-4 ring-primary" : ""
-        }`}
-      >
-        {n > 0 && (
-          <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-ink bg-primary text-xs font-extrabold text-white">
-            {n}
-          </span>
-        )}
-        <LayerArt id={id} width={72} />
-        <span className="mt-1 block font-display text-xs font-extrabold">{label}</span>
-        <span className="block text-xs font-bold text-muted-foreground">{priceText}</span>
-      </button>
-    );
-  };
+  const bottles = [
+    { id: "mustard", label: "MUSTARD", body: "#F2C200", cap: "#E8B800" },
+    { id: "ketchup", label: "KETCHUP", body: "#E11D2E", cap: "#B90F22" },
+    { id: "mayo", label: "MAYO", body: "#F5E7BE", cap: "#1E40E6" },
+  ];
 
   return (
-    <div>
-      {/* ---------- BUILDER ---------- */}
-      <section id="builder" className="mx-auto w-full max-w-[1440px] px-4 py-12 sm:px-6">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-3xl font-extrabold sm:text-4xl">BUILD YOUR BURGER</h2>
-          <div className="flex gap-2" role="group" aria-label="Builder view">
+    <section id="builder" className="steel-surface border-y-[3px] border-ink">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-10 sm:px-6">
+        <h2 className="text-center font-display text-3xl font-extrabold sm:text-4xl">
+          BUILD YOUR BURGER
+        </h2>
+        <p className="mt-1 text-center text-sm font-bold text-muted-foreground">
+          Tap a tray, a bottle or a carton — your burger builds itself in the box.
+        </p>
+
+        {/* Sauce bottles — across the top, as in the reel */}
+        <div className="mt-8 flex justify-center gap-4 sm:gap-8">
+          {bottles.map((b) => (
             <button
+              key={b.id}
               type="button"
-              onClick={() => setView("stack")}
-              className={`pill ${view === "stack" ? "pill-blue" : "pill-yellow"} h-11 px-4 text-sm`}
-              aria-pressed={view === "stack"}
+              onClick={() => toggleIngredient(b.id)}
+              aria-label={`Add ${b.label}`}
+              className={`flex w-[76px] flex-col items-center rounded-2xl border-2 border-ink bg-white/80 p-2 shadow-[3px_3px_0_0_var(--ink)] transition-transform hover:-translate-y-1 ${
+                countOf(b.id) > 0 ? "ring-4 ring-primary" : ""
+              }`}
             >
-              STACK VIEW
+              <span className="block h-4 w-8 rounded-t-md border-2 border-ink" style={{ background: b.cap }} aria-hidden="true" />
+              <span
+                className="mt-1 flex h-20 w-14 items-center justify-center rounded-xl border-2 border-ink text-center text-[9px] font-extrabold leading-tight text-primary"
+                style={{ background: b.body }}
+                aria-hidden="true"
+              >
+                DOUBLE
+                <br />
+                GOOD
+              </span>
+              <span className="mt-2 rounded bg-sun px-2 py-0.5 text-[10px] font-extrabold">{b.label}</span>
             </button>
-            <button
-              type="button"
-              onClick={() => setView("counter")}
-              className={`pill ${view === "counter" ? "pill-blue" : "pill-yellow"} h-11 px-4 text-sm`}
-              aria-pressed={view === "counter"}
-            >
-              COUNTER VIEW
-            </button>
-          </div>
+          ))}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[260px_1fr_300px]">
-          {/* Left: presets + categories */}
-          <div className="chunk-card p-4">
-            <h3 className="font-display text-lg font-extrabold">BURGERS</h3>
-            <div className="mt-3 space-y-2">
-              {PRESETS.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => loadPreset(p.layerIds)}
-                  className={`w-full rounded-2xl border-2 border-ink px-3 py-2 text-left font-display font-extrabold transition-transform hover:-translate-y-0.5 ${
-                    presetMatch?.id === p.id ? "bg-sun" : "bg-sun-soft"
-                  }`}
-                >
-                  {p.name}
-                  <span className="block text-xs font-semibold text-muted-foreground">{p.blurb}</span>
-                </button>
-              ))}
-            </div>
-            <h3 className="mt-6 font-display text-lg font-extrabold">STEPS</h3>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {CATEGORY_STEPS.map((s, i) => (
-                <button
-                  key={s.category}
-                  type="button"
-                  onClick={() => setStepIndex(i)}
-                  className={`rounded-full border-2 border-ink px-3 py-1 text-xs font-extrabold ${
-                    i === stepIndex ? "bg-primary text-white" : "bg-sun-soft"
-                  }`}
-                >
-                  {i + 1}. {s.label}
-                </button>
-              ))}
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button type="button" onClick={randomStack} className="pill pill-purple h-10 flex-1 text-xs">
-                <Dices className="h-4 w-4" aria-hidden="true" /> RANDOM
-              </button>
-              <button type="button" onClick={clearStack} className="pill pill-yellow h-10 flex-1 text-xs">
-                <RotateCcw className="h-4 w-4" aria-hidden="true" /> CLEAR
-              </button>
-            </div>
-          </div>
-
-          {/* Centre: live stack or counter */}
-          <div
-            className={`chunk-surface p-4 sm:p-6 ${dragOver ? "drop-glow" : ""} ${
-              view === "counter" ? "steel-surface" : ""
-            }`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setDragOver(false);
-              const id = e.dataTransfer.getData("text/plain");
-              if (id) addIngredient(id);
-            }}
-          >
-            {view === "stack" ? (
-              <>
-                <p className="text-center font-display text-sm font-extrabold tracking-wide">
-                  DRAG OR CLICK INGREDIENTS TO BUILD
+        <div className="mt-8 grid gap-6 lg:grid-cols-[24%_1fr_16%]">
+          {/* Left: trays, or receipt once an order is added — as in the reel loop */}
+          <div>
+            {showReceipt ? (
+              <div className="rotate-[-2deg] rounded-2xl border-2 border-ink bg-[#FFF8E1] p-4 shadow-[4px_4px_0_0_var(--ink)]">
+                <p className="text-center font-display text-sm font-extrabold text-primary">
+                  DOUBLE GOOD
                 </p>
-                <div className="mt-4 rounded-3xl border-[3px] border-ink bg-sun px-4 py-6 shadow-[6px_6px_0_0_var(--ink)]">
-                  <StackArt layers={layers} />
-                </div>
-                <p className="mt-4 text-center text-sm font-bold">
-                  Layers: {layers.length} · Height: {stackHeightLabel(layers.length)}
-                  {addedFlash ? " · ADDED!" : ""}
+                <p className="mt-2 font-display font-extrabold">{lastAddedName}</p>
+                <ul className="mt-2 space-y-1 text-xs font-bold text-muted-foreground">
+                  {layers.map((l) => (
+                    <li key={l.uid}>· {ingredientById(l.ingredientId).name}</li>
+                  ))}
+                </ul>
+                <p className="mt-3 flex justify-between border-t-2 border-dashed border-ink/30 pt-2 font-display font-extrabold">
+                  <span>TOTAL</span>
+                  <span>{formatRs(price)}</span>
                 </p>
-              </>
+                <button
+                  type="button"
+                  onClick={() => cart.setDrawerOpen(true)}
+                  className="pill pill-blue mt-4 h-11 w-full text-sm"
+                >
+                  VIEW ORDER
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowReceipt(false);
+                    setLayers(defaultStack());
+                  }}
+                  className="pill pill-yellow mt-2 h-11 w-full text-sm"
+                >
+                  BUILD ANOTHER
+                </button>
+              </div>
             ) : (
               <>
-                <p className="text-center font-display text-sm font-extrabold tracking-wide">
-                  TOP-DOWN COUNTER — CLICK A TRAY, BOTTLE OR CARTON
-                </p>
-                <div className="mt-4 grid gap-3 md:grid-cols-[1fr_1.4fr_1fr]">
-                  <div className="space-y-2">
-                    <p className="font-display text-xs font-extrabold">INGREDIENT TRAYS</p>
-                    {INGREDIENTS.map((ing) => (
+                <div className="mb-3 flex gap-2">
+                  <button type="button" onClick={randomStack} className="pill pill-purple h-9 flex-1 text-xs">
+                    <Dices className="h-4 w-4" aria-hidden="true" /> RANDOM
+                  </button>
+                  <button type="button" onClick={clearStack} className="pill pill-yellow h-9 flex-1 text-xs">
+                    <RotateCcw className="h-4 w-4" aria-hidden="true" /> CLEAR
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {INGREDIENTS.map((ing) => {
+                    const n = countOf(ing.id);
+                    return (
                       <button
                         key={ing.id}
                         type="button"
                         onClick={() => toggleIngredient(ing.id)}
-                        className="flex w-full items-center justify-between rounded-2xl border-2 border-ink bg-card px-3 py-1.5 text-left text-xs font-extrabold"
+                        aria-label={`${ing.name}, ${formatRs(ing.price)}${n > 0 ? `, selected ${n}` : ""}`}
+                        className={`relative rounded-2xl border-2 border-ink bg-white/85 p-2 shadow-[3px_3px_0_0_rgba(0,0,0,0.25)] transition-transform hover:-translate-y-1 ${
+                          n > 0 ? "ring-4 ring-primary" : ""
+                        }`}
                       >
-                        <span>{ing.name}</span>
-                        <span>{formatRs(ing.price)}</span>
+                        {n > 0 && (
+                          <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-ink bg-primary text-xs font-extrabold text-white">
+                            {n}
+                          </span>
+                        )}
+                        <span className="flex h-12 items-center justify-center">
+                          <TrayVisual id={ing.id} />
+                        </span>
+                        <span className="mt-1 block rounded bg-sun px-1 py-0.5 text-center text-[10px] font-extrabold">
+                          {ing.name}
+                        </span>
+                        <span className="mt-1 block text-center text-[11px] font-bold text-muted-foreground">
+                          {formatRs(ing.price)}
+                        </span>
                       </button>
-                    ))}
-                  </div>
-                  <div className="rounded-3xl border-[3px] border-ink bg-sun px-4 py-4">
-                    <p className="text-center font-display text-xs font-extrabold">YOUR BOX</p>
-                    <div className="mt-2">
-                      <StackArt layers={layers} width={200} />
-                    </div>
-                    <div className="mt-3 flex justify-center gap-3">
-                      {[
-                        { id: "mustard", label: "MUSTARD", cls: "bg-[#F2C200]" },
-                        { id: "ketchup", label: "KETCHUP", cls: "bg-[#E11D2E] text-white" },
-                        { id: "mayo", label: "MAYO", cls: "bg-[#F5E7BE]" },
-                      ].map((b) => (
-                        <button
-                          key={b.id}
-                          type="button"
-                          onClick={() => toggleIngredient(b.id)}
-                          className={`rounded-full border-2 border-ink px-3 py-2 text-xs font-extrabold ${b.cls}`}
-                        >
-                          {b.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="font-display text-xs font-extrabold">SIDES CARTONS</p>
-                    {SIDES.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => cart.addSide(s.id, s.name, s.price)}
-                        className="w-full rounded-2xl border-2 border-ink bg-sun px-3 py-3 text-left"
-                      >
-                        <span className="block font-display text-sm font-extrabold">{s.name}</span>
-                        <span className="block text-xs font-bold">{s.blurb}</span>
-                        <span className="mt-1 block text-xs font-extrabold">{formatRs(s.price)} — ADD</span>
-                      </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               </>
             )}
           </div>
 
-          {/* Right: order summary */}
-          <div className="chunk-card p-4">
-            <h3 className="font-display text-lg font-extrabold">YOUR ORDER</h3>
-            {layers.length === 0 ? (
-              <p className="mt-3 text-sm font-semibold text-muted-foreground">
-                Add a layer to start your burger.
-              </p>
-            ) : (
-              <ul className="mt-3 space-y-1.5">
-                {layers.map((layer) => (
-                  <li key={layer.uid} className="flex items-center justify-between gap-2 text-sm font-bold">
-                    <span>{ingredientById(layer.ingredientId).name}</span>
-                    <span className="flex items-center gap-2">
-                      <span>{formatRs(ingredientById(layer.ingredientId).price)}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeLayer(layer.uid)}
-                        aria-label={`Remove ${ingredientById(layer.ingredientId).name}`}
-                        className="rounded-full p-1 hover:bg-ink/10"
-                      >
-                        <X className="h-4 w-4" aria-hidden="true" />
-                      </button>
+          {/* Centre: open two-compartment box */}
+          <div className="relative">
+            {/* Lid flap open at the back */}
+            <div className="mx-auto h-6 w-[92%] -rotate-1 rounded-t-2xl border-[3px] border-b-0 border-ink bg-sun" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-3xl border-[3px] border-ink bg-sun shadow-[6px_6px_0_0_var(--ink)]">
+              <div className="relative flex">
+                <div className="relative flex-1 overflow-hidden bg-[#FFF8E1] p-4">
+                  <PatternPaper />
+                  <div className="relative">
+                    <TopViewBurger layers={layers} />
+                  </div>
+                  <p className="relative mt-2 text-center">
+                    <span className="rounded bg-sun px-2 py-0.5 text-[11px] font-extrabold">
+                      YOUR BURGER · {formatRs(price)}
                     </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="mt-4 border-t-2 border-dashed border-ink/30 pt-3">
-              <div className="flex justify-between font-display text-xl font-extrabold">
-                <span>TOTAL</span>
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span
-                    key={price}
-                    initial={reduce ? false : { scale: 1.25 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    {formatRs(price)}
-                  </motion.span>
-                </AnimatePresence>
+                  </p>
+                </div>
+                <div className="relative hidden w-[38%] overflow-hidden border-l-[3px] border-ink bg-[#FFF8E1] sm:block">
+                  <PatternPaper />
+                  <div className="relative flex h-full items-center justify-center p-4">
+                    <span className="rounded bg-sun px-2 py-1 text-center text-[11px] font-extrabold">
+                      SECOND HALF
+                      <br />
+                      COMING SOON
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p className="mt-1 text-xs font-semibold text-muted-foreground">
-                Base {formatRs(150)} included · Delivery Rs 120 at checkout
-              </p>
             </div>
-            <button type="button" onClick={addToOrder} className="pill pill-blue mt-4 h-12 w-full">
-              ADD TO ORDER
-            </button>
-            <p className="mt-2 text-center text-xs font-semibold text-muted-foreground">
-              {presetMatch ? `Preset: ${presetMatch.name}` : "Custom burger — built by you"}
+            <p className="mt-4 text-center text-sm font-bold">
+              Layers: {layers.length}
+              {layers.length > 0 ? ` · ${layers.map((l) => ingredientById(l.ingredientId).name).join(" · ")}` : ""}
             </p>
           </div>
-        </div>
 
-        {/* Bottom selector strip */}
-        <div className="chunk-card mt-6 p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="font-display text-xl font-extrabold">{step.stepLabel}</h3>
-            <div className="flex gap-2">
+          {/* Right: fry cartons, vertical */}
+          <div id="sides" className="flex flex-row gap-4 lg:flex-col">
+            {SIDES.map((s, i) => (
               <button
-                type="button"
-                disabled={stepIndex === 0}
-                onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
-                className="pill pill-yellow h-10 px-4 text-xs"
-              >
-                ← BACK
-              </button>
-              <button
-                type="button"
-                disabled={stepIndex === CATEGORY_STEPS.length - 1}
-                onClick={() => setStepIndex((i) => Math.min(CATEGORY_STEPS.length - 1, i + 1))}
-                className="pill pill-blue h-10 px-4 text-xs"
-              >
-                NEXT STEP →
-              </button>
-            </div>
-          </div>
-          <div className="mt-2 flex gap-2">
-            {CATEGORY_STEPS.map((s, i) => (
-              <span
-                key={s.category}
-                className={`h-2 flex-1 rounded-full ${i <= stepIndex ? "bg-primary" : "bg-ink/20"}`}
-                aria-hidden="true"
-              />
-            ))}
-          </div>
-          <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
-            {stepIngredients.map((ing) => tile(ing.id, ing.name, formatRs(ing.price)))}
-          </div>
-          <p className="mt-3 text-sm font-semibold text-muted-foreground">
-            Click a tile to add or remove it — or drag it onto the burger. Step {stepIndex + 1} of{" "}
-            {CATEGORY_STEPS.length}.
-          </p>
-        </div>
-      </section>
-
-      {/* ---------- SIDES ---------- */}
-      <section id="sides" className="mx-auto w-full max-w-[1440px] px-4 pb-12 sm:px-6">
-        <h2 className="font-display text-3xl font-extrabold sm:text-4xl">SIDES</h2>
-        <div className="mt-6 grid gap-6 sm:grid-cols-3">
-          {SIDES.map((s) => (
-            <div key={s.id} className="chunk-surface p-5 text-center">
-              <p className="font-display text-xl font-extrabold">{s.name}</p>
-              <p className="mt-1 text-sm font-semibold">{s.blurb}</p>
-              <p className="mt-2 font-display text-lg font-extrabold">{formatRs(s.price)}</p>
-              <button
+                key={s.id}
                 type="button"
                 onClick={() => cart.addSide(s.id, s.name, s.price)}
-                className="pill pill-blue mt-3 h-11 w-full"
+                aria-label={`Add ${s.name}, ${formatRs(s.price)}`}
+                className="flex-1 rounded-2xl border-2 border-ink bg-white/85 p-3 text-center shadow-[3px_3px_0_0_rgba(0,0,0,0.25)] transition-transform hover:-translate-y-1 lg:flex-none"
               >
-                ADD
+                <span className="mx-auto block h-10 w-16" aria-hidden="true">
+                  {i === 0 ? (
+                    <span className="flex justify-center gap-1">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <span key={j} className="block h-10 w-2.5 rounded-t bg-[#FFD400] shadow" />
+                      ))}
+                    </span>
+                  ) : i === 1 ? (
+                    <span className="flex justify-center gap-1 pt-2">
+                      {Array.from({ length: 3 }).map((_, j) => (
+                        <span key={j} className="block h-6 w-6 rounded-full border-[3px] border-[#C9A8F5] bg-[#F3E8FF]" />
+                      ))}
+                    </span>
+                  ) : (
+                    <span className="flex justify-center gap-1 pt-2">
+                      {Array.from({ length: 4 }).map((_, j) => (
+                        <span key={j} className="block h-5 w-5 rounded-full border-2 border-black/10 bg-[#E8A13C]" />
+                      ))}
+                    </span>
+                  )}
+                </span>
+                <span
+                  className="mx-auto mt-1 block w-20 rounded-b-xl border-2 border-ink bg-sun px-1 py-2 text-center text-[10px] font-extrabold text-primary"
+                  style={{ clipPath: "polygon(0 0, 100% 0, 88% 100%, 12% 100%)" }}
+                >
+                  DOUBLE
+                  <br />
+                  GOOD
+                </span>
+                <span className="mt-2 block rounded bg-sun px-1 py-0.5 text-[11px] font-extrabold">
+                  {s.name}
+                </span>
+                <span className="block text-[11px] font-bold text-muted-foreground">
+                  {formatRs(s.price)} — ADD
+                </span>
               </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </section>
-    </div>
+
+        {/* Bottom: centred blue pill, yellow tag to its left — as in the reel */}
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={price}
+              initial={reduce ? false : { scale: 1.2 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="rounded bg-sun px-3 py-2 text-sm font-extrabold shadow"
+            >
+              {formatRs(price)}
+            </motion.span>
+          </AnimatePresence>
+          <button type="button" onClick={addToOrder} className="pill pill-blue h-12 px-8">
+            ADD TO ORDER
+          </button>
+        </div>
+      </div>
+      <div className="h-3 bg-sun" aria-hidden="true" />
+    </section>
   );
 }
