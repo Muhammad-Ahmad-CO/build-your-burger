@@ -13,6 +13,18 @@ import {
   type StackLayer,
 } from "@/components/burger/data";
 import { useCart } from "@/components/cart/CartContext";
+import {
+  PHOTO_BURGER_TOP,
+  PHOTO_FRIES,
+  PHOTO_NUGGETS,
+  PHOTO_ONION_RINGS,
+} from "@/components/burger/photos";
+
+const SIDE_PHOTOS: Record<string, string> = {
+  fries: PHOTO_FRIES,
+  "onion-rings": PHOTO_ONION_RINGS,
+  nuggets: PHOTO_NUGGETS,
+};
 
 const LAYER_COLOURS: Record<string, string> = {
   "bottom-bun": "#E08E24",
@@ -410,7 +422,12 @@ export function BurgerBuilder() {
                 <div className="relative flex-1 overflow-hidden bg-[#FFF8E1] p-4">
                   <PatternPaper />
                   <div className="relative">
-                    <TopViewBurger layers={layers} />
+                    {/* Realistic top-down burger photo in the box, as in the reel */}
+                    <img
+                      src={PHOTO_BURGER_TOP}
+                      alt="Your burger, seen from above"
+                      className="mx-auto aspect-square w-full max-w-[300px] rounded-full object-cover shadow-[0_12px_24px_rgba(0,0,0,0.35)]"
+                    />
                   </div>
                   <p className="relative mt-2 text-center">
                     <span className="rounded bg-sun px-2 py-0.5 text-[11px] font-extrabold">
@@ -444,35 +461,11 @@ export function BurgerBuilder() {
                 aria-label={`Add ${s.name}, ${formatRs(s.price)}`}
                 className="flex-1 rounded-2xl border border-black/10 bg-white/75 p-3 text-center shadow-[0_8px_18px_rgba(0,0,0,0.18)] transition-transform hover:-translate-y-1 lg:flex-none"
               >
-                <span className="mx-auto block h-10 w-16" aria-hidden="true">
-                  {i === 0 ? (
-                    <span className="flex justify-center gap-1">
-                      {Array.from({ length: 5 }).map((_, j) => (
-                        <span key={j} className="block h-10 w-2.5 rounded-t bg-[#FFD400] shadow" />
-                      ))}
-                    </span>
-                  ) : i === 1 ? (
-                    <span className="flex justify-center gap-1 pt-2">
-                      {Array.from({ length: 3 }).map((_, j) => (
-                        <span key={j} className="block h-6 w-6 rounded-full border-[3px] border-[#C9A8F5] bg-[#F3E8FF]" />
-                      ))}
-                    </span>
-                  ) : (
-                    <span className="flex justify-center gap-1 pt-2">
-                      {Array.from({ length: 4 }).map((_, j) => (
-                        <span key={j} className="block h-5 w-5 rounded-full border-2 border-black/10 bg-[#E8A13C]" />
-                      ))}
-                    </span>
-                  )}
-                </span>
-                <span
-                  className="mx-auto mt-1 block w-20 rounded-b-xl bg-sun px-1 py-2 text-center text-[10px] font-extrabold text-primary shadow-sm"
-                  style={{ clipPath: "polygon(0 0, 100% 0, 88% 100%, 12% 100%)" }}
-                >
-                  DOUBLE
-                  <br />
-                  GOOD
-                </span>
+                <img
+                  src={SIDE_PHOTOS[s.id] ?? PHOTO_FRIES}
+                  alt={s.name}
+                  className="mx-auto aspect-[4/5] w-full max-w-[180px] rounded-xl object-cover shadow-md"
+                />
                 <span className="mt-2 block rounded bg-sun px-1 py-0.5 text-[11px] font-extrabold">
                   {s.name}
                 </span>
