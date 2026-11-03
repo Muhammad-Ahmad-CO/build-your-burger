@@ -11,8 +11,6 @@ const NAV: { label: string; target?: string; to?: string }[] = [
   { label: "MENU", target: "menu" },
   { label: "BUILD YOUR BURGER", target: "builder" },
   { label: "SIDES", target: "sides" },
-  { label: "ABOUT", target: "about" },
-  { label: "CONTACT", target: "contact" },
 ];
 
 export function Header() {
@@ -60,6 +58,9 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <span className="hidden font-display text-sm font-extrabold text-foreground lg:block">
+            Better together.
+          </span>
           <button
             type="button"
             onClick={() => cart.setDrawerOpen(true)}
