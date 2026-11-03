@@ -26,6 +26,20 @@ const SIDE_PHOTOS: Record<string, string> = {
   nuggets: PHOTO_NUGGETS,
 };
 
+import {
+  TRAY_BEEF_PATTY,
+  TRAY_CHEDDAR,
+  TRAY_LETTUCE,
+  TRAY_TOMATO,
+} from "@/components/burger/photos-trays";
+
+const TRAY_PHOTOS: Record<string, string> = {
+  "beef-patty": TRAY_BEEF_PATTY,
+  lettuce: TRAY_LETTUCE,
+  tomato: TRAY_TOMATO,
+  cheddar: TRAY_CHEDDAR,
+};
+
 const LAYER_COLOURS: Record<string, string> = {
   "bottom-bun": "#E08E24",
   "top-bun": "#F5A83C",
@@ -396,8 +410,16 @@ export function BurgerBuilder() {
                             {n}
                           </span>
                         )}
-                        <span className="flex h-12 items-center justify-center">
-                          <TrayVisual id={ing.id} />
+                        <span className="flex h-20 items-center justify-center overflow-hidden rounded-lg">
+                          {TRAY_PHOTOS[ing.id] ? (
+                            <img
+                              src={TRAY_PHOTOS[ing.id]}
+                              alt={ing.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <TrayVisual id={ing.id} />
+                          )}
                         </span>
                         <span className="mt-1 block rounded bg-sun px-1 py-0.5 text-center text-[10px] font-extrabold">
                           {ing.name}
