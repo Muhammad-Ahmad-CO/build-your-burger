@@ -37,10 +37,10 @@ function Index() {
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="relative mx-auto w-full max-w-[640px]"
           >
-            {/* Closed yellow takeaway box with lid, as in the reel hero */}
+            {/* Closed yellow takeaway box, as in the reel hero: lid attached, soft shadow, no hard outline */}
             <div className="relative">
-              <div className="h-5 w-full -rotate-1 rounded-t-2xl border-[3px] border-b-0 border-ink bg-[#FFD400]" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-b-3xl border-[3px] border-ink bg-[#FFD400] px-6 py-10 text-center shadow-[8px_8px_0_0_var(--ink)]">
+              <div className="h-[18px] w-full rounded-t-2xl bg-[#FFE066] shadow-[0_-4px_10px_rgba(0,0,0,0.15)]" aria-hidden="true" />
+              <div className="relative overflow-hidden rounded-b-3xl px-6 py-10 text-center shadow-[0_18px_32px_rgba(0,0,0,0.35)]" style={{ background: "linear-gradient(180deg, #FFD400 0%, #F5B800 100%)" }}>
                 <p className="font-display text-4xl font-extrabold leading-none text-primary sm:text-5xl">
                   DOUBLE
                   <br />
@@ -51,11 +51,10 @@ function Index() {
                   BUILD YOUR BURGER
                   <span className="inline-block h-3 w-6 rounded-t-full border-2 border-[#E11D2E] bg-transparent" aria-hidden="true" />
                 </p>
-                <Hand
-                  className="mx-auto mt-4 h-10 w-10 rotate-[-20deg] text-[#E11D2E]"
-                  fill="#E11D2E"
-                  aria-hidden="true"
-                />
+                {/* Small printed red hand, as on the reel's box — kept tiny so it reads as an icon */}
+                <span className="mx-auto mt-4 flex h-6 w-6 items-center justify-center" aria-hidden="true">
+                  <Hand className="h-6 w-6 text-[#E11D2E]" aria-hidden="true" />
+                </span>
               </div>
             </div>
             {/* Single blue pill centred below the box, as in the reel */}
