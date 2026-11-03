@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { DELIVERY_FEE, type StackLayer } from "@/components/burger/data";
+import { DELIVERY_FEE } from "@/components/burger/data";
 
 export interface BurgerCartItem {
   key: string;
@@ -153,10 +153,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotal = useMemo(
     () =>
       items.reduce((sum, it) => {
-        if (it.kind === "side") return sum + it.price * it.qty;
-        // burger unit price supplied at add time is unreliable here; recompute is
-        // unnecessary because addBurger stores the real price — see addBurgerWithPrice
-        return sum + (it as BurgerCartItem).price * it.qty;
+        return sum + it.price * it.qty;
       }, 0),
     [items],
   );
