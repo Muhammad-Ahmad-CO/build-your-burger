@@ -78,8 +78,8 @@
   /* purple small pills */
   --grape: oklch(0.525 0.245 293);
   /* steel counter */
-  --steel: oklch(0.865 0.017 248);
-  --steel-dark: oklch(0.705 0.031 255);
+  --steel: oklch(0.88 0.012 85);
+  --steel-dark: oklch(0.74 0.02 85);
   --border: oklch(0.205 0 0);
   --input: oklch(0.205 0 0);
   --ring: oklch(0.475 0.243 265);
@@ -113,8 +113,8 @@
   --destructive: oklch(0.585 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
   --grape: oklch(0.525 0.245 293);
-  --steel: oklch(0.865 0.017 248);
-  --steel-dark: oklch(0.705 0.031 255);
+  --steel: oklch(0.88 0.012 85);
+  --steel-dark: oklch(0.74 0.02 85);
   --border: oklch(0.205 0 0);
   --input: oklch(0.205 0 0);
   --ring: oklch(0.475 0.243 265);
@@ -250,13 +250,12 @@
   .steel-surface {
     background:
       repeating-linear-gradient(
-        0deg,
-        transparent 0 7px,
-        rgba(255, 255, 255, 0.35) 7px 8px,
-        transparent 8px 14px
+        90deg,
+        transparent 0 2px,
+        rgba(255, 255, 255, 0.12) 2px 3px,
+        transparent 3px 6px
       ),
-      linear-gradient(180deg, var(--steel) 0%, var(--steel) 70%, var(--steel-dark) 100%);
-    border-bottom: 6px solid var(--steel-dark);
+      linear-gradient(180deg, #E8E2D6 0%, #D9D2C2 55%, #C9C1B0 100%);
   }
 
   /* ---- Droppable stage glow while dragging ---- */
