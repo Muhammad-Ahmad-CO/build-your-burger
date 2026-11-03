@@ -5,17 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * DOUBLE GOOD design system.
+ * Palette is locked: pale butter yellow page, bright yellow surfaces,
+ * royal blue primary, ketchup red accent, near-black ink.
+ * All colors use oklch.
  */
 
 @theme inline {
@@ -45,91 +38,86 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-ink: var(--ink);
+  --color-sun: var(--sun);
+  --color-sun-soft: var(--sun-soft);
+  --color-grape: var(--grape);
+  --color-ketchup: var(--ketchup);
+  --color-steel: var(--steel);
+  --color-steel-dark: var(--steel-dark);
+  --font-display: "Baloo 2", "Fredoka", ui-rounded, system-ui, sans-serif;
+  --font-sans: "Baloo 2", ui-rounded, system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --radius: 1.25rem;
+  /* pale butter yellow page */
+  --background: oklch(0.977 0.042 98);
+  --foreground: oklch(0.205 0 0);
+  /* near-black ink for outlines + hard shadows */
+  --ink: oklch(0.205 0 0);
+  /* bright yellow boxes/trays/header band */
+  --sun: oklch(0.875 0.185 92);
+  --sun-soft: oklch(0.94 0.09 96);
+  /* royal blue */
+  --primary: oklch(0.475 0.243 265);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.875 0.185 92);
+  --secondary-foreground: oklch(0.205 0 0);
+  --card: oklch(0.99 0 0);
+  --card-foreground: oklch(0.205 0 0);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.94 0.05 96);
+  --muted-foreground: oklch(0.45 0.03 260);
+  --accent: oklch(0.94 0.07 96);
+  --accent-foreground: oklch(0.205 0 0);
+  /* ketchup red */
+  --destructive: oklch(0.585 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  /* purple small pills */
+  --grape: oklch(0.525 0.245 293);
+  /* steel counter */
+  --steel: oklch(0.865 0.017 248);
+  --steel-dark: oklch(0.705 0.031 255);
+  --border: oklch(0.205 0 0);
+  --input: oklch(0.205 0 0);
+  --ring: oklch(0.475 0.243 265);
+  --chart-1: oklch(0.475 0.243 265);
+  --chart-2: oklch(0.875 0.185 92);
+  --chart-3: oklch(0.585 0.22 25);
+  --chart-4: oklch(0.525 0.245 293);
+  --chart-5: oklch(0.705 0.031 255);
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* The brand ships light-only; dark tokens mirror light so stray dark
+     classes never break the palette. */
+  --background: oklch(0.977 0.042 98);
+  --foreground: oklch(0.205 0 0);
+  --ink: oklch(0.205 0 0);
+  --sun: oklch(0.875 0.185 92);
+  --sun-soft: oklch(0.94 0.09 96);
+  --primary: oklch(0.475 0.243 265);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.875 0.185 92);
+  --secondary-foreground: oklch(0.205 0 0);
+  --card: oklch(0.99 0 0);
+  --card-foreground: oklch(0.205 0 0);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.94 0.05 96);
+  --muted-foreground: oklch(0.45 0.03 260);
+  --accent: oklch(0.94 0.07 96);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.585 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --grape: oklch(0.525 0.245 293);
+  --steel: oklch(0.865 0.017 248);
+  --steel-dark: oklch(0.705 0.031 255);
+  --border: oklch(0.205 0 0);
+  --input: oklch(0.205 0 0);
+  --ring: oklch(0.475 0.243 265);
 }
 
 @layer base {
@@ -140,5 +128,150 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ---- Pill buttons with hard offset shadow ---- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      transform 120ms ease,
+      box-shadow 120ms ease,
+      filter 120ms ease;
+  }
+
+  .pill:hover {
+    transform: translateY(-2px);
+  }
+
+  .pill:active {
+    transform: translateY(2px);
+  }
+
+  .pill:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+
+  .pill-blue {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 3px 3px 0 0 var(--ink);
+  }
+
+  .pill-blue:hover {
+    box-shadow: 4px 6px 0 0 var(--ink);
+  }
+
+  .pill-blue:active {
+    box-shadow: 1px 1px 0 0 var(--ink);
+  }
+
+  .pill-yellow {
+    background: var(--sun);
+    color: var(--ink);
+    box-shadow: 3px 3px 0 0 var(--ink);
+  }
+
+  .pill-yellow:hover {
+    box-shadow: 4px 6px 0 0 var(--ink);
+  }
+
+  .pill-yellow:active {
+    box-shadow: 1px 1px 0 0 var(--ink);
+  }
+
+  .pill-purple {
+    background: var(--grape);
+    color: oklch(0.99 0 0);
+    box-shadow: 3px 3px 0 0 var(--ink);
+  }
+
+  .pill-purple:hover {
+    box-shadow: 4px 6px 0 0 var(--ink);
+  }
+
+  .pill-purple:active {
+    box-shadow: 1px 1px 0 0 var(--ink);
+  }
+
+  /* ---- Chunky cards ---- */
+  .chunk-card {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    box-shadow: 6px 6px 0 0 var(--ink);
+  }
+
+  .chunk-surface {
+    background: var(--sun);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    box-shadow: 6px 6px 0 0 var(--ink);
+  }
+
+  /* ---- Brand logo, stacked two lines ---- */
+  .logo-stack {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.88;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- Metallic counter surface ---- */
+  .steel-surface {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 7px,
+        rgba(255, 255, 255, 0.35) 7px 8px,
+        transparent 8px 14px
+      ),
+      linear-gradient(180deg, var(--steel) 0%, var(--steel) 70%, var(--steel-dark) 100%);
+    border-bottom: 6px solid var(--steel-dark);
+  }
+
+  /* ---- Droppable stage glow while dragging ---- */
+  .drop-glow {
+    box-shadow:
+      0 0 0 4px var(--primary),
+      0 0 32px 6px color-mix(in oklab, var(--primary) 55%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill,
+  .pill:hover,
+  .pill:active {
+    transition: none;
+    transform: none;
   }
 }
