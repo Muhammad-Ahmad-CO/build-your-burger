@@ -33,6 +33,15 @@ import {
   TRAY_TOMATO,
 } from "@/components/burger/photos-trays";
 
+import {
+  LAYER_BEEF_COOKED,
+  LAYER_BUN,
+  LAYER_CHICKEN,
+  LAYER_LETTUCE_TEX,
+  LAYER_TOMATO_TEX,
+  LAYER_VEGGIE,
+} from "@/components/burger/photos-layers";
+
 const TRAY_PHOTOS: Record<string, string> = {
   "beef-patty": TRAY_BEEF_PATTY,
   lettuce: TRAY_LETTUCE,
@@ -126,105 +135,80 @@ function TrayVisual({ id }: { id: string }) {
 function TopViewBurger({ layers }: { layers: StackLayer[] }) {
   const ids = layers.map((l) => l.ingredientId);
   const has = (id: string) => ids.includes(id);
-  const hasPatty = has("beef-patty") || has("chicken-patty") || has("veggie-patty");
-  const hasCheese = has("cheddar") || has("smoked-cheese");
-  const pattyColour = has("beef-patty") ? "#5C3315" : has("chicken-patty") ? "#D98E2B" : "#6E7F33";
+  const count = (id: string) => ids.filter((x) => x === id).length;
   return (
-    <div className="relative mx-auto h-[280px] w-[280px] sm:h-[300px] sm:w-[300px]">
-      {layers.length === 0 && (
-        <p className="absolute inset-0 flex items-center justify-center text-center font-display font-extrabold text-muted-foreground">
-          TAP A TRAY TO START
-        </p>
+    <motion.div
+      key={layers.length + ids.join(",")}
+      initial={{ scale: 0.985 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 260, damping: 18 }}
+      className="relative mx-auto h-[300px] w-[300px]"
+    >
+      {/* bottom bun edge peeking at the bottom */}
+      {has("bottom-bun") && (
+        <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="absolute left-1/2 top-1/2 h-[262px] w-[262px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-[#e8a94e] to-[#c97f2e] shadow-[0_8px_16px_rgba(0,0,0,0.3)]" />
       )}
-      {/* Lettuce: wavy blob, larger than the bun, peeks all around */}
-      {has("lettuce") && (
-        <div
-          className="absolute left-1/2 top-1/2 h-[272px] w-[272px] -translate-x-1/2 -translate-y-1/2"
-          style={{
-            background: "radial-gradient(circle at 35% 30%, #7ED957 0%, #4CAF2E 55%, #3A8F1F 100%)",
-            borderRadius: "48% 52% 55% 45% / 52% 48% 52% 48%",
-            boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
-          }}
-          aria-hidden="true"
-        />
+      {/* patty: cooked beef photo */}
+      {has("beef-patty") && (
+        <motion.div initial={{ scale: 0.5, opacity: 0, y: 12 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 16 }} className="absolute left-1/2 top-1/2 h-[252px] w-[252px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_6px_12px_rgba(0,0,0,0.3)]" style={{ borderRadius: "48% 52% 50% 50% / 52% 48% 52% 48%" }}>
+          <img src={LAYER_BEEF_COOKED} alt="" className="h-full w-full object-cover" />
+        </motion.div>
       )}
-      {/* Cheese: square turned so its corners peek out */}
-      {hasCheese && (
-        <div
-          className="absolute left-1/2 top-1/2 h-[210px] w-[210px] -translate-x-1/2 -translate-y-1/2 rotate-12 rounded-[18px]"
-          style={{
-            background: "linear-gradient(135deg, #FFC93C 0%, #FF9D00 100%)",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-          }}
-          aria-hidden="true"
-        />
+      {has("chicken-patty") && (
+        <motion.div initial={{ scale: 0.5, opacity: 0, y: 12 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 16 }} className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_6px_12px_rgba(0,0,0,0.3)]" style={{ borderRadius: "52% 48% 50% 50% / 48% 52% 48% 52%" }}>
+          <img src={LAYER_CHICKEN} alt="" className="h-full w-full object-cover" />
+        </motion.div>
       )}
-      {/* Tomato slices peeking at the sides */}
+      {has("veggie-patty") && (
+        <motion.div initial={{ scale: 0.5, opacity: 0, y: 12 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 16 }} className="absolute left-1/2 top-1/2 h-[248px] w-[248px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_6px_12px_rgba(0,0,0,0.3)]">
+          <img src={LAYER_VEGGIE} alt="" className="h-full w-full object-cover" />
+        </motion.div>
+      )}
+      {/* cheddar: photographic cheese square peeking out */}
+      {has("cheddar") && (
+        <motion.div initial={{ rotate: -16, scale: 0.5, opacity: 0 }} animate={{ rotate: -10, scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200, damping: 16 }} className="absolute left-1/2 top-1/2 h-[205px] w-[205px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[18px] shadow-[0_6px_12px_rgba(0,0,0,0.3)]">
+          <img src={TRAY_CHEDDAR} alt="" className="h-full w-full object-cover" />
+        </motion.div>
+      )}
+      {/* tomato: photographic tomato disc peeking out */}
       {has("tomato") && (
-        <>
-          <div className="absolute left-[6px] top-[42%] h-[74px] w-[74px] rounded-full" style={{ background: "radial-gradient(circle at 40% 35%, #FF6B5E 0%, #E11D2E 70%)", boxShadow: "0 3px 8px rgba(0,0,0,0.25)" }} aria-hidden="true" />
-          <div className="absolute right-[10px] top-[55%] h-[64px] w-[64px] rounded-full" style={{ background: "radial-gradient(circle at 40% 35%, #FF6B5E 0%, #E11D2E 70%)", boxShadow: "0 3px 8px rgba(0,0,0,0.25)" }} aria-hidden="true" />
-        </>
+        <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200, damping: 16 }} className="absolute left-1/2 top-1/2 ml-[-10px] mt-[6px] h-[240px] w-[240px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full opacity-95">
+          <img src={LAYER_TOMATO_TEX} alt="" className="h-full w-full object-cover" />
+        </motion.div>
       )}
-      {/* Onion rings peeking */}
+      {/* lettuce: photographic green blob peeking out on all sides */}
+      {has("lettuce") && (
+        <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200, damping: 16 }} className="absolute left-1/2 top-1/2 ml-[8px] mt-[-4px] h-[272px] w-[272px] -translate-x-1/2 -translate-y-1/2 overflow-hidden" style={{ borderRadius: "55% 45% 52% 48% / 48% 55% 45% 52%" }}>
+          <img src={LAYER_LETTUCE_TEX} alt="" className="h-full w-full object-cover" />
+        </motion.div>
+      )}
+      {/* onion rings peeking */}
       {has("onion") && (
-        <>
-          <div className="absolute left-[18%] top-[12%] h-[56px] w-[56px] rounded-full border-[10px] border-[#E58BB0]" style={{ boxShadow: "0 3px 8px rgba(0,0,0,0.2)" }} aria-hidden="true" />
-          <div className="absolute right-[16%] top-[78%] h-[48px] w-[48px] rounded-full border-[9px] border-[#C96A9B]" aria-hidden="true" />
-        </>
-      )}
-      {/* Patty: dark, slightly irregular blob */}
-      {hasPatty && (
-        <div
-          className="absolute left-1/2 top-1/2 h-[252px] w-[252px] -translate-x-1/2 -translate-y-1/2"
-          style={{
-            background: `radial-gradient(circle at 38% 32%, ${pattyColour} 0%, #3E2110 75%)`,
-            borderRadius: "45% 55% 40% 60% / 55% 40% 60% 45%",
-            boxShadow: "0 8px 16px rgba(0,0,0,0.35)",
-          }}
-          aria-hidden="true"
-        />
-      )}
-      {/* Top bun: glossy dome, sesame seeds on top */}
-      {has("top-bun") && (
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="absolute left-1/2 top-1/2 h-[224px] w-[224px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            background: "radial-gradient(circle at 34% 26%, #FFD88A 0%, #F5A83C 45%, #D97E0A 100%)",
-            boxShadow: "0 10px 20px rgba(0,0,0,0.35), inset 0 -12px 20px rgba(120,50,0,0.35)",
-          }}
-          aria-hidden="true"
-        >
-          <span className="absolute left-[18%] top-[16%] h-[52px] w-[90px] rounded-full bg-white/40 blur-md" />
-          {[
-            ["30%", "26%", -20],
-            ["55%", "20%", 30],
-            ["68%", "42%", 70],
-            ["38%", "58%", -50],
-            ["60%", "66%", 15],
-            ["48%", "38%", 45],
-            ["72%", "60%", -30],
-            ["26%", "48%", 60],
-          ].map(([left, top, rot], j) => (
-            <span
-              key={j}
-              className="absolute block h-[7px] w-[13px] rounded-full bg-[#FFF6D8] shadow-sm"
-              style={{ left: left as string, top: top as string, transform: `rotate(${rot}deg)` }}
-            />
+        <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="absolute left-1/2 top-1/2 h-[244px] w-[244px] -translate-x-1/2 -translate-y-1/2">
+          {[0, 1, 2, 3].map((i) => (
+            <span key={i} className="absolute rounded-full border-[7px] border-[#c98bb0] bg-transparent" style={{ inset: 18 + i * 22, opacity: 0.9 }} />
           ))}
         </motion.div>
       )}
-      {/* Fried egg yolk peeking under the bun edge */}
-      {has("fried-egg") && (
-        <div className="absolute bottom-[8%] left-[30%] h-[52px] w-[52px] rounded-full bg-[#FFB800] shadow-md" aria-hidden="true" />
+      {/* top bun: sesame bun photo on top, covering the centre */}
+      {has("top-bun") && (
+        <motion.div initial={{ scale: 0.5, opacity: 0, y: -16 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 220, damping: 15 }} className="absolute left-1/2 top-1/2 h-[224px] w-[224px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_14px_24px_rgba(0,0,0,0.35)]">
+          <img src={LAYER_BUN} alt="" className="h-full w-full object-cover" />
+        </motion.div>
       )}
-    </div>
+      {/* empty state: no layers yet */}
+      {layers.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center rounded-full border-2 border-dashed border-black/20 bg-white/40 text-center text-sm font-bold text-black/50">
+          Tap a tray to start building
+        </div>
+      )}
+      {/* double-layer badge */}
+      {count("beef-patty") > 1 && (
+        <span className="absolute bottom-2 right-6 z-10 rounded-full bg-blue-700 px-2 py-0.5 text-xs font-bold text-white shadow">DOUBLE</span>
+      )}
+    </motion.div>
   );
 }
-
 function PatternPaper() {
   return (
     <div className="pointer-events-none absolute inset-0 grid grid-cols-4 content-start gap-3 overflow-hidden p-3 opacity-25" aria-hidden="true">
@@ -444,12 +428,8 @@ export function BurgerBuilder() {
                 <div className="relative flex-1 overflow-hidden bg-[#FFF8E1] p-4">
                   <PatternPaper />
                   <div className="relative">
-                    {/* Realistic top-down burger photo in the box, as in the reel */}
-                    <img
-                      src={PHOTO_BURGER_TOP}
-                      alt="Your burger, seen from above"
-                      className="mx-auto aspect-square w-full max-w-[300px] rounded-full object-cover shadow-[0_12px_24px_rgba(0,0,0,0.35)]"
-                    />
+                    {/* Dynamic burger: every tray click adds/removes a layer here, as in the reel */}
+                    <TopViewBurger layers={layers} />
                   </div>
                   <p className="relative mt-2 text-center">
                     <span className="rounded bg-sun px-2 py-0.5 text-[11px] font-extrabold">
