@@ -47,7 +47,7 @@ interface CartState {
   drawerOpen: boolean;
   lastOrder: PlacedOrder | null;
   setDrawerOpen: (open: boolean) => void;
-  addBurger: (name: string, layers: StackLayer[]) => void;
+  addBurger: (name: string, layerIds: string[], unitPrice: number) => void;
   addSide: (sideId: string, name: string, price: number) => void;
   increment: (key: string) => void;
   decrement: (key: string) => void;
