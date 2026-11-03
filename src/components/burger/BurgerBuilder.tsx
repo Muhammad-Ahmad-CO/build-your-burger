@@ -95,53 +95,105 @@ function TrayVisual({ id }: { id: string }) {
   );
 }
 
-/** Top-down burger: layers as concentric rings, top bun outermost. */
+/** Top-down burger as the reel shows it: a glossy sesame bun on top, with
+ *  the other layers only peeking out around its edge — never full discs. */
 function TopViewBurger({ layers }: { layers: StackLayer[] }) {
-  const topDown = [...layers].reverse();
+  const ids = layers.map((l) => l.ingredientId);
+  const has = (id: string) => ids.includes(id);
+  const hasPatty = has("beef-patty") || has("chicken-patty") || has("veggie-patty");
+  const hasCheese = has("cheddar") || has("smoked-cheese");
+  const pattyColour = has("beef-patty") ? "#5C3315" : has("chicken-patty") ? "#D98E2B" : "#6E7F33";
   return (
-    <div className="relative mx-auto h-[240px] w-[240px] sm:h-[280px] sm:w-[280px]">
-      {topDown.map((layer, i) => {
-        const inset = i * 13;
-        const colour = LAYER_COLOURS[layer.ingredientId] ?? "#999";
-        return (
-          <motion.div
-            key={layer.uid}
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="absolute rounded-full border-2 border-black/15 shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
-            style={{ inset, background: colour }}
-          >
-            {layer.ingredientId === "top-bun" && (
-              <span className="absolute inset-0" aria-hidden="true">
-                {[
-                  ["30%", "28%"],
-                  ["55%", "22%"],
-                  ["70%", "45%"],
-                  ["40%", "60%"],
-                  ["62%", "68%"],
-                ].map(([left, top], j) => (
-                  <span
-                    key={j}
-                    className="absolute block h-2 w-1.5 rounded-full bg-[#FFF3D6]"
-                    style={{ left, top }}
-                  />
-                ))}
-              </span>
-            )}
-            {layer.ingredientId === "fried-egg" && (
-              <span
-                className="absolute left-1/2 top-1/2 block h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FFB800]"
-                aria-hidden="true"
-              />
-            )}
-          </motion.div>
-        );
-      })}
+    <div className="relative mx-auto h-[280px] w-[280px] sm:h-[300px] sm:w-[300px]">
       {layers.length === 0 && (
         <p className="absolute inset-0 flex items-center justify-center text-center font-display font-extrabold text-muted-foreground">
           TAP A TRAY TO START
         </p>
+      )}
+      {/* Lettuce: wavy blob, larger than the bun, peeks all around */}
+      {has("lettuce") && (
+        <div
+          className="absolute left-1/2 top-1/2 h-[272px] w-[272px] -translate-x-1/2 -translate-y-1/2"
+          style={{
+            background: "radial-gradient(circle at 35% 30%, #7ED957 0%, #4CAF2E 55%, #3A8F1F 100%)",
+            borderRadius: "48% 52% 55% 45% / 52% 48% 52% 48%",
+            boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
+          }}
+          aria-hidden="true"
+        />
+      )}
+      {/* Cheese: square turned so its corners peek out */}
+      {hasCheese && (
+        <div
+          className="absolute left-1/2 top-1/2 h-[210px] w-[210px] -translate-x-1/2 -translate-y-1/2 rotate-12 rounded-[18px]"
+          style={{
+            background: "linear-gradient(135deg, #FFC93C 0%, #FF9D00 100%)",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+          }}
+          aria-hidden="true"
+        />
+      )}
+      {/* Tomato slices peeking at the sides */}
+      {has("tomato") && (
+        <>
+          <div className="absolute left-[6px] top-[42%] h-[74px] w-[74px] rounded-full" style={{ background: "radial-gradient(circle at 40% 35%, #FF6B5E 0%, #E11D2E 70%)", boxShadow: "0 3px 8px rgba(0,0,0,0.25)" }} aria-hidden="true" />
+          <div className="absolute right-[10px] top-[55%] h-[64px] w-[64px] rounded-full" style={{ background: "radial-gradient(circle at 40% 35%, #FF6B5E 0%, #E11D2E 70%)", boxShadow: "0 3px 8px rgba(0,0,0,0.25)" }} aria-hidden="true" />
+        </>
+      )}
+      {/* Onion rings peeking */}
+      {has("onion") && (
+        <>
+          <div className="absolute left-[18%] top-[12%] h-[56px] w-[56px] rounded-full border-[10px] border-[#E58BB0]" style={{ boxShadow: "0 3px 8px rgba(0,0,0,0.2)" }} aria-hidden="true" />
+          <div className="absolute right-[16%] top-[78%] h-[48px] w-[48px] rounded-full border-[9px] border-[#C96A9B]" aria-hidden="true" />
+        </>
+      )}
+      {/* Patty: dark, slightly irregular blob */}
+      {hasPatty && (
+        <div
+          className="absolute left-1/2 top-1/2 h-[252px] w-[252px] -translate-x-1/2 -translate-y-1/2"
+          style={{
+            background: `radial-gradient(circle at 38% 32%, ${pattyColour} 0%, #3E2110 75%)`,
+            borderRadius: "45% 55% 40% 60% / 55% 40% 60% 45%",
+            boxShadow: "0 8px 16px rgba(0,0,0,0.35)",
+          }}
+          aria-hidden="true"
+        />
+      )}
+      {/* Top bun: glossy dome, sesame seeds on top */}
+      {has("top-bun") && (
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          className="absolute left-1/2 top-1/2 h-[224px] w-[224px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            background: "radial-gradient(circle at 34% 26%, #FFD88A 0%, #F5A83C 45%, #D97E0A 100%)",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.35), inset 0 -12px 20px rgba(120,50,0,0.35)",
+          }}
+          aria-hidden="true"
+        >
+          <span className="absolute left-[18%] top-[16%] h-[52px] w-[90px] rounded-full bg-white/40 blur-md" />
+          {[
+            ["30%", "26%", -20],
+            ["55%", "20%", 30],
+            ["68%", "42%", 70],
+            ["38%", "58%", -50],
+            ["60%", "66%", 15],
+            ["48%", "38%", 45],
+            ["72%", "60%", -30],
+            ["26%", "48%", 60],
+          ].map(([left, top, rot], j) => (
+            <span
+              key={j}
+              className="absolute block h-[7px] w-[13px] rounded-full bg-[#FFF6D8] shadow-sm"
+              style={{ left: left as string, top: top as string, transform: `rotate(${rot}deg)` }}
+            />
+          ))}
+        </motion.div>
+      )}
+      {/* Fried egg yolk peeking under the bun edge */}
+      {has("fried-egg") && (
+        <div className="absolute bottom-[8%] left-[30%] h-[52px] w-[52px] rounded-full bg-[#FFB800] shadow-md" aria-hidden="true" />
       )}
     </div>
   );
@@ -247,21 +299,23 @@ export function BurgerBuilder() {
               type="button"
               onClick={() => toggleIngredient(b.id)}
               aria-label={`Add ${b.label}`}
-              className={`flex w-[76px] flex-col items-center rounded-2xl border-2 border-ink bg-white/80 p-2 shadow-[3px_3px_0_0_var(--ink)] transition-transform hover:-translate-y-1 ${
-                countOf(b.id) > 0 ? "ring-4 ring-primary" : ""
+              className={`flex w-[84px] flex-col items-center bg-transparent transition-transform hover:-translate-y-1 ${
+                countOf(b.id) > 0 ? "drop-shadow-[0_0_0_rgba(30,64,230,0.6)]" : ""
               }`}
             >
-              <span className="block h-4 w-8 rounded-t-md border-2 border-ink" style={{ background: b.cap }} aria-hidden="true" />
+              {/* Real squeeze bottle: cap, narrow neck, tall body — no white capsule */}
+              <span className="block h-[14px] w-[26px] rounded-t-md" style={{ background: b.cap }} aria-hidden="true" />
+              <span className="block h-[10px] w-[18px]" style={{ background: b.body, filter: "brightness(0.92)" }} aria-hidden="true" />
               <span
-                className="mt-1 flex h-20 w-14 items-center justify-center rounded-xl border-2 border-ink text-center text-[9px] font-extrabold leading-tight text-primary"
-                style={{ background: b.body }}
+                className="flex h-[104px] w-[62px] flex-col items-center justify-center rounded-[26px_26px_18px_18px] text-center text-[10px] font-extrabold leading-tight text-primary shadow-[0_10px_18px_rgba(0,0,0,0.35)]"
+                style={{ background: `linear-gradient(135deg, ${b.body} 0%, ${b.body} 75%, rgba(0,0,0,0.22) 100%)` }}
                 aria-hidden="true"
               >
                 DOUBLE
                 <br />
                 GOOD
               </span>
-              <span className="mt-2 rounded bg-sun px-2 py-0.5 text-[10px] font-extrabold">{b.label}</span>
+              <span className="mt-2 rounded bg-sun px-2 py-0.5 text-[10px] font-extrabold shadow">{b.label}</span>
             </button>
           ))}
         </div>
@@ -321,8 +375,8 @@ export function BurgerBuilder() {
                         type="button"
                         onClick={() => toggleIngredient(ing.id)}
                         aria-label={`${ing.name}, ${formatRs(ing.price)}${n > 0 ? `, selected ${n}` : ""}`}
-                        className={`relative rounded-2xl border-2 border-ink bg-white/85 p-2 shadow-[3px_3px_0_0_rgba(0,0,0,0.25)] transition-transform hover:-translate-y-1 ${
-                          n > 0 ? "ring-4 ring-primary" : ""
+                        className={`relative rounded-2xl border border-black/10 bg-white/75 p-2 shadow-[0_8px_18px_rgba(0,0,0,0.18)] transition-transform hover:-translate-y-1 ${
+                          n > 0 ? "ring-2 ring-primary bg-[#FFFBEA]" : ""
                         }`}
                       >
                         {n > 0 && (
@@ -349,9 +403,9 @@ export function BurgerBuilder() {
 
           {/* Centre: open two-compartment box */}
           <div className="relative">
-            {/* Lid flap open at the back */}
-            <div className="mx-auto h-6 w-[92%] -rotate-1 rounded-t-2xl border-[3px] border-b-0 border-ink bg-sun" aria-hidden="true" />
-            <div className="relative overflow-hidden rounded-3xl border-[3px] border-ink bg-sun shadow-[6px_6px_0_0_var(--ink)]">
+            {/* Lid flap open at the back — attached to the box, not floating */}
+            <div className="mx-auto h-[18px] w-[94%] rounded-t-2xl bg-[#FFE066] shadow-[0_-4px_10px_rgba(0,0,0,0.2)]" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-b-3xl bg-sun shadow-[0_14px_28px_rgba(0,0,0,0.35)]">
               <div className="relative flex">
                 <div className="relative flex-1 overflow-hidden bg-[#FFF8E1] p-4">
                   <PatternPaper />
@@ -364,13 +418,11 @@ export function BurgerBuilder() {
                     </span>
                   </p>
                 </div>
-                <div className="relative hidden w-[38%] overflow-hidden border-l-[3px] border-ink bg-[#FFF8E1] sm:block">
+                <div className="relative hidden w-[38%] overflow-hidden border-l border-black/10 bg-[#FFF8E1] sm:block">
                   <PatternPaper />
-                  <div className="relative flex h-full items-center justify-center p-4">
-                    <span className="rounded bg-sun px-2 py-1 text-center text-[11px] font-extrabold">
+                  <div className="relative p-3">
+                    <span className="rounded bg-sun px-2 py-0.5 text-[10px] font-extrabold shadow-sm">
                       SECOND HALF
-                      <br />
-                      COMING SOON
                     </span>
                   </div>
                 </div>
@@ -390,7 +442,7 @@ export function BurgerBuilder() {
                 type="button"
                 onClick={() => cart.addSide(s.id, s.name, s.price)}
                 aria-label={`Add ${s.name}, ${formatRs(s.price)}`}
-                className="flex-1 rounded-2xl border-2 border-ink bg-white/85 p-3 text-center shadow-[3px_3px_0_0_rgba(0,0,0,0.25)] transition-transform hover:-translate-y-1 lg:flex-none"
+                className="flex-1 rounded-2xl border border-black/10 bg-white/75 p-3 text-center shadow-[0_8px_18px_rgba(0,0,0,0.18)] transition-transform hover:-translate-y-1 lg:flex-none"
               >
                 <span className="mx-auto block h-10 w-16" aria-hidden="true">
                   {i === 0 ? (
@@ -414,7 +466,7 @@ export function BurgerBuilder() {
                   )}
                 </span>
                 <span
-                  className="mx-auto mt-1 block w-20 rounded-b-xl border-2 border-ink bg-sun px-1 py-2 text-center text-[10px] font-extrabold text-primary"
+                  className="mx-auto mt-1 block w-20 rounded-b-xl bg-sun px-1 py-2 text-center text-[10px] font-extrabold text-primary shadow-sm"
                   style={{ clipPath: "polygon(0 0, 100% 0, 88% 100%, 12% 100%)" }}
                 >
                   DOUBLE
