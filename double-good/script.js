@@ -448,27 +448,35 @@
     preTimers.push(window.setTimeout(function () { if (pre.parentNode) pre.remove(); }, 7000));
   }
 
-  /* ---------- v23: classics detail stage ---------- */
-  var DETAILS = {
-    classic: { name: "THE CLASSIC", img: "finishedBurger", desc: "A smashed-to-order patty under properly melted cheddar, crisp lettuce, tomato and our house sauce in a toasted brioche. The one that started it." },
-    double:  { name: "THE DOUBLE",  img: "classicDouble",  desc: "Two patties, two cheddars, pickles under the lid and ketchup doing its quiet work. Built for the very hungry and the very sure." },
-    garden:  { name: "THE GARDEN",  img: "classicGarden",  desc: "A bright beetroot patty with lettuce, tomato, red onion and garlic mayo. Crunchy, fresh, and not a compromise in sight." }
-  };
-  var detailImg = document.getElementById("detailImg");
-  function showDetail(k) {
-    var d = DETAILS[k]; if (!d || !detailImg) return;
-    detailImg.src = A[d.img] || "";
-    document.getElementById("detailDesc").textContent = d.desc;
-    document.getElementById("detailDiag").textContent = ("DOUBLE GOOD. " + d.name + ". ").repeat(26);
-    document.getElementById("detailLoad").setAttribute("data-preset", k);
-    document.querySelectorAll("[data-classic]").forEach(function (p) {
-      p.classList.toggle("sel", p.getAttribute("data-classic") === k);
+  /* ---------- v25: classics — pinned horizontal scroll (the reference's move) ----------
+     The row of three sits in the first frame; scrolling on slides the track
+     sideways through one detail frame per burger. Without GSAP (or on small
+     screens) the track is a plain horizontal swipe strip. */
+  document.querySelectorAll("[data-diag]").forEach(function (el) {
+    el.textContent = ("DOUBLE GOOD. " + el.getAttribute("data-diag") + ". ").repeat(26);
+  });
+  var cTrack = document.getElementById("classicsTrack");
+  var cScroll = document.getElementById("classicsScroll");
+  if (cTrack && cScroll && window.gsap && window.ScrollTrigger && !reduceMotionQ) {
+    gsap.registerPlugin(ScrollTrigger);
+    var buildScroll = function () {
+      var dist = cTrack.scrollWidth - window.innerWidth;
+      if (dist <= 0) return null;
+      return gsap.to(cTrack, {
+        x: -dist, ease: "none",
+        scrollTrigger: {
+          trigger: "#classics", start: "top top", end: "+=" + dist,
+          pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1
+        }
+      });
+    };
+    var mm = gsap.matchMedia();
+    mm.add("(min-width: 821px)", function () {
+      cScroll.classList.add("pinned-mode");
+      var tween = buildScroll();
+      return function () { cScroll.classList.remove("pinned-mode"); if (tween) { if (tween.scrollTrigger) tween.scrollTrigger.kill(); tween.kill(); gsap.set(cTrack, { x: 0 }); } };
     });
   }
-  document.querySelectorAll("[data-classic]").forEach(function (p) {
-    p.addEventListener("click", function () { showDetail(p.getAttribute("data-classic")); });
-  });
-  showDetail("classic");
 
   /* ---------- motion: GSAP entrance + scroll reveals (progressive enhancement) ---------- */
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

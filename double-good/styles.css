@@ -461,3 +461,16 @@ body{background:#EFEFEF}
   .tblock-red{font-size:11.5px}
   .tpre-slot{right:16px;bottom:9vh;font-size:19px;white-space:normal;text-align:right}
 }
+
+/* v25: classics horizontal track (pinned by GSAP on desktop, swipe otherwise) */
+.tscroll{overflow-x:auto;scrollbar-width:none}
+.tscroll::-webkit-scrollbar{display:none}
+.tscroll.pinned-mode{overflow:visible}
+.ttrack{display:flex;width:max-content;align-items:stretch}
+.tframe{width:100vw;flex:none}
+.tframe-grid .trow3{border-top:0;height:100%}
+.ttrack .tdetail{border-top:0;min-height:560px}
+@media (max-width:820px){
+  .tframe{width:92vw}
+  .ttrack .tdetail{grid-template-columns:1fr;min-height:0}
+}
