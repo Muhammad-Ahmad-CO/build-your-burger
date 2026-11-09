@@ -33,9 +33,11 @@ img{user-select:none;-webkit-user-drag:none}
   background:
     radial-gradient(900px 420px at 70% -60px, rgba(255,205,110,.38), transparent 65%),
     radial-gradient(700px 500px at 8% 110%, rgba(255,180,80,.22), transparent 60%),
-    repeating-linear-gradient(93deg, transparent 0 44px, rgba(255,255,255,.13) 44px 45px, transparent 45px 90px),
+    linear-gradient(115deg, transparent 30%, rgba(255,255,255,.20) 42%, rgba(255,255,255,.03) 50%, transparent 62%),
+    linear-gradient(245deg, transparent 55%, rgba(255,255,255,.13) 68%, transparent 82%),
+    repeating-linear-gradient(93deg, transparent 0 44px, rgba(255,255,255,.16) 44px 45px, transparent 45px 90px),
     repeating-linear-gradient(0deg, transparent 0 150px, rgba(29,26,20,.05) 150px 151px),
-    linear-gradient(165deg,#d3cabb 0%,#bfb6a4 45%,#a89e8b 100%);
+    linear-gradient(165deg,#d8cfc0 0%,#c2b8a6 45%,#aa9f8a 100%);
 }
 
 /* ---------- nav ---------- */
@@ -105,8 +107,8 @@ img{user-select:none;-webkit-user-drag:none}
 /* sauce bottles */
 .bottles{display:flex;justify-content:center;gap:26px}
 .sauce-btn{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:0}
-.bottle-wrap{position:relative;display:block;height:158px;transition:transform .13s ease}
-.bottle-wrap img{height:158px;filter:drop-shadow(0 8px 8px rgba(29,26,20,.35))}
+.bottle-wrap{position:relative;display:block;height:192px;transition:transform .13s ease}
+.bottle-wrap img{height:192px;filter:drop-shadow(0 9px 9px rgba(29,26,20,.35))}
 .sauce-btn:hover .bottle-wrap{transform:translateY(-5px) rotate(-2deg)}
 .sauce-btn:active .bottle-wrap{transform:scale(.94)}
 .sauce-btn .tag{transform:rotate(1.5deg)}
@@ -114,7 +116,7 @@ img{user-select:none;-webkit-user-drag:none}
 .sauce-btn[draggable="true"]{cursor:grab}
 .sauce-btn.dragging{opacity:.55}
 .bottle-label{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%) rotate(-3deg);
-  font-family:'Baloo 2',cursive;font-weight:800;font-size:12px;letter-spacing:.02em;color:var(--blue);
+  font-family:'Baloo 2',cursive;font-weight:800;font-size:14px;letter-spacing:.02em;color:var(--blue);
   white-space:nowrap;pointer-events:none}
 
 /* the open box */
@@ -253,8 +255,8 @@ img{user-select:none;-webkit-user-drag:none}
   .open-box{grid-template-columns:1fr}
   .comp-side{min-height:150px}
   .how-steps{grid-template-columns:1fr}
-  .bottle-wrap,.bottle-wrap img{height:128px}
-  .bottle-label{font-size:10px}
+  .bottle-wrap,.bottle-wrap img{height:150px}
+  .bottle-label{font-size:11px}
 }
 @media (prefers-reduced-motion: reduce){
   .float-img,.layer.just-added img,.side-drops img,.receipt{animation:none}
