@@ -424,25 +424,31 @@
     var c = document.getElementById("timerBurgerCount"); if (c) c.textContent = Math.floor(secs / 40);
   }, 1000);
 
-  /* ---------- v23: preloader + classics detail stage ---------- */
-  var pre = document.getElementById("preloader");
-  if (pre) {
-    var preLines = ["Smashing the patty...", "Peeling the potatoes...", "Squeezing the sauce...", "Toasting the bun..."];
-    var preI = 0, preStatus = document.getElementById("preStatus"), preHidden = false;
-    var preIv = window.setInterval(function () {
-      preI = (preI + 1) % preLines.length;
-      if (preStatus) preStatus.textContent = preLines[preI];
-    }, 380);
-    var hidePre = function () {
-      if (preHidden) return; preHidden = true;
-      window.clearInterval(preIv);
-      pre.classList.add("done");
-      window.setTimeout(function () { if (pre.parentNode) pre.remove(); }, 650);
-    };
-    window.addEventListener("load", function () { window.setTimeout(hidePre, 750); });
-    window.setTimeout(hidePre, 2800);
+  /* ---------- v24: preloader, rebuilt to the reference's mechanics ----------
+     One line only, bottom-right: the word types in letter by letter, then
+     swaps to status phrases; a red half-disc stands in for the full stop.
+     Exits as a slide-up curtain after ~4.6s. */
+  var pre = document.getElementById("preloader"), preText = document.getElementById("preText");
+  if (pre && preText) {
+    var preWord = "Stacking";
+    var prePhrases = ["Stacking the layers...", "Peeling the potatoes...", "Squeezing the sauce...", "Toasting the bun..."];
+    var preTimers = [];
+    for (var ci = 0; ci < preWord.length; ci++) {
+      (function (n) {
+        preTimers.push(window.setTimeout(function () { preText.textContent = preWord.slice(0, n + 1); }, 110 * (n + 1)));
+      })(ci);
+    }
+    prePhrases.forEach(function (ph, i) {
+      preTimers.push(window.setTimeout(function () { preText.textContent = ph; }, 1250 + i * 1700));
+    });
+    preTimers.push(window.setTimeout(function () {
+      pre.classList.add("lift");
+      preTimers.push(window.setTimeout(function () { if (pre.parentNode) pre.remove(); }, 1100));
+    }, 4600));
+    preTimers.push(window.setTimeout(function () { if (pre.parentNode) pre.remove(); }, 7000));
   }
 
+  /* ---------- v23: classics detail stage ---------- */
   var DETAILS = {
     classic: { name: "THE CLASSIC", img: "finishedBurger", desc: "A smashed-to-order patty under properly melted cheddar, crisp lettuce, tomato and our house sauce in a toasted brioche. The one that started it." },
     double:  { name: "THE DOUBLE",  img: "classicDouble",  desc: "Two patties, two cheddars, pickles under the lid and ketchup doing its quiet work. Built for the very hungry and the very sure." },

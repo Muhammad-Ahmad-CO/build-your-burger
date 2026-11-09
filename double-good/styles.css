@@ -415,12 +415,11 @@ body{background:#EFEFEF}
 }
 
 /* ================= v23: closer to the reference ================= */
-.tpreloader{position:fixed;inset:0;z-index:400;background:#EFEFEF;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:20px;transition:opacity .55s ease}
-.tpreloader.done{opacity:0;pointer-events:none}
-.tpre-word{font-family:'Michroma',sans-serif;font-size:clamp(38px,7vw,92px);color:#1F1F1F;letter-spacing:.02em}
-.tred-dot{color:#EF3205}
-.tpre-status{font-family:'Archivo',sans-serif;font-size:15px;letter-spacing:.06em;color:rgba(31,31,31,.7)}
+.tpreloader{position:fixed;inset:0;z-index:400;background:#EFEFEF;transition:transform 1s cubic-bezier(.7,0,.3,1)}
+.tpreloader.lift{transform:translateY(-100%)}
+.tpre-slot{position:absolute;right:6vw;bottom:11vh;display:flex;align-items:flex-end;gap:10px;
+  font-family:'Michroma',sans-serif;font-size:clamp(27px,3.1vw,58px);color:#1F1F1F;white-space:nowrap;line-height:1}
+.tpre-mark{width:.52em;height:.30em;background:#EF3205;border-radius:999px 999px 0 0;flex:none;margin-bottom:.07em}
 .tnav{height:76px}
 .tblock{font-size:16.5px;padding:0 30px}
 .tblock-red{font-size:21px}
@@ -451,4 +450,14 @@ body{background:#EFEFEF}
   .tdetail-red{min-height:170px}
   .tphotos{grid-template-columns:1fr}
   .tphotos img{height:260px}
+}
+
+/* v24 audit fix: the block nav overflowed small screens */
+@media (max-width:640px){
+  .tnav{overflow:hidden}
+  .tnav-left{padding:0 8px}
+  .tnav-sound{font-size:8.5px;letter-spacing:.08em}
+  .tblock{padding:0 7px;font-size:9px;letter-spacing:.02em}
+  .tblock-red{font-size:11.5px}
+  .tpre-slot{right:16px;bottom:9vh;font-size:19px;white-space:normal;text-align:right}
 }
