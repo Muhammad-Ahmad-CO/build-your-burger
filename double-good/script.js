@@ -18,7 +18,7 @@
     topBun:  { name: "Top bun",     price: 1.00 }
   };
   var SAUCES = {
-    mustard: { name: "House sauce", color: "#F2A007" },
+    mustard: { name: "House sauce", color: "#FFB52E" },
     ketchup: { name: "Ketchup",     color: "#D92B1F" },
     mayo:    { name: "Garlic mayo", color: "#FDF3D8" }
   };
@@ -116,21 +116,25 @@
     if (soundOn) { ac(); SFX.side(); }
   });
 
-  /* reel-style sauce: thick diagonal stripes swept across the top of the layer,
-     slightly arched, with a soft shadow pass and a gloss highlight */
+  /* reel-style sauce: one continuous zigzag sweep across the TOP face of the
+     layer below — long connected diagonal stripes, shadow pass + gloss pass */
   function drizzleURI(color) {
-    var stripes = [[26, 36, 74, 8], [62, 39, 110, 10], [98, 40, 146, 12], [134, 38, 180, 13]];
-    function pathFor(dy) {
-      return stripes.map(function (s) {
-        return "M" + s[0] + " " + (s[1] + dy) + " Q " + ((s[0] + s[2]) / 2) + " " + ((s[1] + s[3]) / 2 - 4 + dy) + " " + s[2] + " " + (s[3] + dy);
-      }).join(" ");
+    /* three stacked zigzag rows = the dense back-and-forth squeeze from the reel */
+    function row(dy, dx) {
+      return "M" + (-8 + dx) + " " + (22 + dy) + " L" + (30 + dx) + " " + (4 + dy) + " L" + (62 + dx) + " " + (20 + dy) +
+             " L" + (96 + dx) + " " + (3 + dy) + " L" + (128 + dx) + " " + (19 + dy) + " L" + (162 + dx) + " " + (4 + dy) +
+             " L" + (196 + dx) + " " + (18 + dy) + " L" + (212 + dx) + " " + (9 + dy);
     }
-    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 44'>" +
-      "<clipPath id='e'><ellipse cx='100' cy='22' rx='97' ry='20'/></clipPath>" +
+    var all = row(0, 0) + " " + row(19, -4) + " " + row(38, 2);
+    function pass(dy, stroke, w) {
+      return "<path d='" + all + "' transform='translate(0," + dy + ")' fill='none' stroke='" + stroke + "' stroke-width='" + w + "' stroke-linecap='round' stroke-linejoin='round'/>";
+    }
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 66'>" +
+      "<clipPath id='e'><ellipse cx='100' cy='33' rx='98' ry='31'/></clipPath>" +
       "<g clip-path='url(#e)'>" +
-      "<path d='" + pathFor(2.5) + "' fill='none' stroke='rgba(60,30,0,.20)' stroke-width='12.5' stroke-linecap='round'/>" +
-      "<path d='" + pathFor(0) + "' fill='none' stroke='" + color + "' stroke-width='11' stroke-linecap='round'/>" +
-      "<path d='" + pathFor(-3) + "' fill='none' stroke='rgba(255,255,255,.35)' stroke-width='3.4' stroke-linecap='round'/>" +
+      pass(2.5, "rgba(60,30,0,.20)", 12) +
+      pass(0, color, 9.5) +
+      pass(-2.6, "rgba(255,255,255,.35)", 3) +
       "</g></svg>";
     return "url('data:image/svg+xml," + encodeURIComponent(svg).replace(/'/g, "%27") + "')";
   }
