@@ -14,7 +14,7 @@
     cheese:  { name: "Cheddar",     price: 1.20 },
     lettuce: { name: "Lettuce",     price: 0.50 },
     pickles: { name: "Pickles",     price: 0.50 },
-    onion:   { name: "Red onion",   price: 0.50 },
+    onion:   { name: "Red onion",   price: 0.50, asset: "onionRings" },
     topBun:  { name: "Top bun",     price: 1.00 }
   };
   var SAUCES = {
@@ -47,6 +47,7 @@
   var sceneEl = document.getElementById("builder");
 
   var layers = [];      /* {kind:'ing'|'sauce', key, name, price} */
+  var freshSauce = -1;  /* index of a just-added sauce, for the draw-in wipe */
   var sidesOn = {};     /* side key -> true */
   var lastAction = -1;
   var lastAddedName = "";
@@ -119,22 +120,21 @@
   /* reel-style sauce: one continuous zigzag sweep across the TOP face of the
      layer below — long connected diagonal stripes, shadow pass + gloss pass */
   function drizzleURI(color) {
-    /* three stacked zigzag rows = the dense back-and-forth squeeze from the reel */
-    function row(dy, dx) {
-      return "M" + (-8 + dx) + " " + (22 + dy) + " L" + (30 + dx) + " " + (4 + dy) + " L" + (62 + dx) + " " + (20 + dy) +
-             " L" + (96 + dx) + " " + (3 + dy) + " L" + (128 + dx) + " " + (19 + dy) + " L" + (162 + dx) + " " + (4 + dy) +
-             " L" + (196 + dx) + " " + (18 + dy) + " L" + (212 + dx) + " " + (9 + dy);
+    /* parallel diagonal sweeps, long enough to be trimmed by the layer's outline */
+    var bands = "";
+    for (var i = 0; i < 5; i++) {
+      var x = 2 + i * 38;
+      bands += "M" + x + " 64 L" + (x + 52) + " -6 ";
     }
-    var all = row(0, 0) + " " + row(19, -4) + " " + row(38, 2);
     function pass(dy, stroke, w) {
-      return "<path d='" + all + "' transform='translate(0," + dy + ")' fill='none' stroke='" + stroke + "' stroke-width='" + w + "' stroke-linecap='round' stroke-linejoin='round'/>";
+      return "<path d='" + bands + "' transform='translate(0," + dy + ")' fill='none' stroke='" + stroke + "' stroke-width='" + w + "' stroke-linecap='round'/>";
     }
-    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 66'>" +
-      "<clipPath id='e'><ellipse cx='100' cy='33' rx='98' ry='31'/></clipPath>" +
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 58'>" +
+      "<clipPath id='e'><ellipse cx='100' cy='29' rx='98' ry='27'/></clipPath>" +
       "<g clip-path='url(#e)'>" +
       pass(2.5, "rgba(60,30,0,.20)", 12) +
-      pass(0, color, 9.5) +
-      pass(-2.6, "rgba(255,255,255,.35)", 3) +
+      pass(0, color, 10) +
+      pass(-2.8, "rgba(255,255,255,.35)", 3.2) +
       "</g></svg>";
     return "url('data:image/svg+xml," + encodeURIComponent(svg).replace(/'/g, "%27") + "')";
   }
@@ -146,7 +146,7 @@
     layers.forEach(function (l, i) {
       var anim = i === lastAction ? " just-added" : "";
       if (l.kind === "sauce") {
-        html += '<div class="sauce-strip' + anim + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + ';background-image:' + drizzleURI(SAUCES[l.key].color) + '"></div>';
+        html += '<div class="sauce-strip' + anim + (i === freshSauce ? " drawing" : "") + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + ';background-image:' + drizzleURI(SAUCES[l.key].color) + '"></div>';
       } else {
         var asset = (ING[l.key] && ING[l.key].asset) || l.key;
         var baseW = (l.key === "tomato" || l.key === "pickles") ? 200 : 196;
@@ -201,6 +201,7 @@
     });
     document.querySelector(".comp-main").classList.toggle("is-empty", layers.length === 0);
     document.querySelector(".comp-main").classList.toggle("sealed", sealed());
+    freshSauce = -1;
 
     /* sides resting in the box's side compartment */
     sideDropsEl.innerHTML = Object.keys(sidesOn).map(function (k) {
@@ -217,6 +218,7 @@
       entry = { kind: "ing", key: "bunTop", name: entry.name, price: entry.price };
     }
     layers.push(entry); lastAction = layers.length - 1; lastAddedName = entry.name;
+    if (entry.kind === "sauce") freshSauce = layers.length - 1;
     if (entry.kind === "sauce") {
       SFX.squirt();
       document.querySelectorAll(".sauce-btn").forEach(function (b) {
@@ -245,6 +247,24 @@
     document.body.appendChild(clone);
     var dx = target.left + target.width / 2 - (r.left + r.width / 2);
     var dy = target.top + target.height * 0.52 - (r.top + r.height / 2);
+    if (entry.kind === "sauce") {
+      /* the reel's move: the bottle itself flies into the box, flips nozzle-down
+         over the burger and squeezes while the stripes draw themselves in */
+      var sy = target.top + target.height * 0.30 - (r.top + r.height / 2);
+      var sq = clone.animate([
+        { transform: "translate(0,0) rotate(0deg) scale(1,1)", opacity: 1 },
+        { transform: "translate(" + dx + "px," + sy + "px) rotate(0deg) scale(.94, .94)", opacity: 1, offset: 0.42 },
+        { transform: "translate(" + dx + "px," + (sy + 18) + "px) rotate(132deg) scale(.94, .94)", opacity: 1, offset: 0.58 },
+        { transform: "translate(" + dx + "px," + (sy + 26) + "px) rotate(132deg) scale(.94, .84)", opacity: 1, offset: 0.68 },
+        { transform: "translate(" + dx + "px," + (sy + 18) + "px) rotate(132deg) scale(.94, .94)", opacity: 1, offset: 0.76 },
+        { transform: "translate(" + dx + "px," + (sy + 26) + "px) rotate(132deg) scale(.94, .84)", opacity: 1, offset: 0.84 },
+        { transform: "translate(" + dx + "px," + (sy + 8) + "px) rotate(110deg) scale(.9, .9)", opacity: 1, offset: 0.93 },
+        { transform: "translate(" + dx + "px," + (sy - 8) + "px) rotate(60deg) scale(.86, .86)", opacity: 0, offset: 1 }
+      ], { duration: 1020, easing: "cubic-bezier(.3,.7,.4,1)" });
+      window.setTimeout(function () { addLayer(entry); }, 560);
+      sq.onfinish = function () { clone.remove(); };
+      return;
+    }
     var anim = clone.animate([
       { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 },
       { transform: "translate(" + dx * 0.7 + "px," + (dy - 90) + "px) rotate(-7deg) scale(.92)", opacity: 1, offset: 0.65 },

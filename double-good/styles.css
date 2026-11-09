@@ -279,3 +279,7 @@ img{user-select:none;-webkit-user-drag:none}
 .closed-box::after{content:"";position:absolute;inset:12px;border:2px solid rgba(29,26,20,.20);border-radius:13px;pointer-events:none}
 
 .layer[data-key="bunTop"]{margin-bottom:-104px}
+
+/* v16: a fresh sauce draws itself in, left to right, under the squeezing bottle */
+.sauce-strip.drawing{animation:sauceDraw .55s ease-out both}
+@keyframes sauceDraw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
