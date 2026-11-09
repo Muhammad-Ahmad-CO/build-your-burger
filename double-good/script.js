@@ -1,229 +1,201 @@
-/* DOUBLE GOOD — burger builder logic (no dependencies). */
+/* DOUBLE GOOD — v2 builder logic. Artwork lives in assets-data.js (window.DG_ASSETS). */
 (function () {
   "use strict";
-  var BASE_PRICE = 4.00;         /* bun bottom + box */
-  var SAUCE_PRICE = 0.30;
-  var MAX_ITEMS = 14;
+  var A = window.DG_ASSETS || {};
+  var BASE_PRICE = 4.00, SAUCE_PRICE = 0.30, MAX_ITEMS = 14;
 
-  var INGREDIENTS = [
-    { key: "patty",   name: "Beef Patty", price: 3.50, icon: "🥩", cls: "l-patty" },
-    { key: "cheese",  name: "Cheese",     price: 1.20, icon: "🧀", cls: "l-cheese" },
-    { key: "tomato",  name: "Tomato",     price: 0.60, icon: "🍅", cls: "l-tomato" },
-    { key: "lettuce", name: "Lettuce",    price: 0.50, icon: "🥬", cls: "l-lettuce" },
-    { key: "pickles", name: "Pickles",    price: 0.40, icon: "🥒", cls: "l-pickles" },
-    { key: "onion",   name: "Onions",     price: 0.40, icon: "🧅", cls: "l-onion" },
-    { key: "egg",     name: "Fried Egg",  price: 1.50, icon: "🍳", cls: "l-egg" },
-    { key: "topbun",  name: "Top Bun",    price: 1.00, icon: "🍔", cls: "l-bun-top", single: true }
-  ];
+  var ING = {
+    patty:   { name: "Beef Patty", price: 3.50 },
+    cheese:  { name: "Cheese",     price: 1.20 },
+    tomato:  { name: "Tomato",     price: 0.60 },
+    lettuce: { name: "Lettuce",    price: 0.50 },
+    pickles: { name: "Pickles",    price: 0.40 },
+    onion:   { name: "Onions",     price: 0.40 },
+    egg:     { name: "Fried Egg",  price: 1.50 },
+    topBun:  { name: "Top Bun",    price: 1.00, single: true }
+  };
+  var SAUCES = {
+    mustard: { name: "Mustard", color: "#F2A007" },
+    ketchup: { name: "Ketchup", color: "#D92B1F" },
+    mayo:    { name: "Mayo",    color: "#FDF3D8" }
+  };
+  var SIDES = {
+    fries: { name: "Fries",       price: 2.90 },
+    rings: { name: "Onion Rings", price: 3.40 },
+    curly: { name: "Curly Fries", price: 3.20 }
+  };
 
-  var items = [];        /* stack above the base: {kind:'layer'|'sauce', name, price, cls, color} */
-  var sides = {};        /* name -> price */
-  var sealed = false;
+  /* wire every <img data-asset> to its generated artwork */
+  document.querySelectorAll("img[data-asset]").forEach(function (img) {
+    var src = A[img.getAttribute("data-asset")];
+    if (src) img.src = src;
+  });
 
   var stackEl = document.getElementById("stack");
-  var orderList = document.getElementById("orderList");
-  var totalEl = document.getElementById("totalPrice");
-  var layerCountEl = document.getElementById("layerCount");
-  var stackStateEl = document.getElementById("stackState");
-  var hint = document.getElementById("handHint");
+  var hintEl = document.getElementById("stageHint");
+  var linesEl = document.getElementById("orderLines");
+  var emptyEl = document.getElementById("orderEmpty");
+  var totalEl = document.getElementById("orderTotal");
+  var metaEl = document.getElementById("orderMeta");
+
+  var layers = [];      /* {kind:'ing'|'sauce', key, name, price} */
+  var sidesOn = {};     /* side key -> true */
+  var lastAction = -1;  /* index of layer to animate */
 
   function money(n) { return "$" + n.toFixed(2); }
+  function total() {
+    var t = BASE_PRICE;
+    layers.forEach(function (l) { t += l.price; });
+    Object.keys(sidesOn).forEach(function (k) { t += SIDES[k].price; });
+    return t;
+  }
+  function sealed() { return layers.length > 0 && layers[layers.length - 1].key === "topBun"; }
 
-  /* tiny pop sound, only after a user gesture (these are all clicks) */
+  /* tiny pop sound, synthesized — no audio files */
   var actx = null;
   function pop(freq) {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      var o = actx.createOscillator(), g = actx.createGain();
-      o.type = "sine"; o.frequency.value = freq || 520;
-      g.gain.setValueAtTime(0.12, actx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.12);
-      o.connect(g); g.connect(actx.destination);
-      o.start(); o.stop(actx.currentTime + 0.13);
-    } catch (e) { /* silent is fine */ }
+      var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+      o.type = "sine"; o.frequency.setValueAtTime(freq || 520, t);
+      o.frequency.exponentialRampToValueAtTime(180, t + 0.09);
+      g.gain.setValueAtTime(0.16, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.11);
+    } catch (e) { /* sound is a bonus, never a blocker */ }
   }
 
-  function total() {
-    var t = BASE_PRICE;
-    items.forEach(function (i) { t += i.price; });
-    Object.keys(sides).forEach(function (k) { t += sides[k]; });
-    return t;
-  }
-
-  function render(animate) {
-    if (!animate) stackEl.classList.add("no-anim");
-    stackEl.innerHTML = "";
-    var base = document.createElement("div");
-    base.className = "layer l-bun-bottom";
-    stackEl.appendChild(base);
-    items.forEach(function (i) {
-      var d = document.createElement("div");
-      d.className = "layer " + i.cls;
-      if (i.kind === "sauce") d.style.backgroundColor = i.color;
-      stackEl.appendChild(d);
-    });
-    if (!animate) requestAnimationFrame(function () { stackEl.classList.remove("no-anim"); });
-
-    layerCountEl.textContent = String(items.length + 1);
-    stackStateEl.textContent = sealed ? "sealed with a top bun" :
-      items.length === 0 ? "bun base ready" : "building… looking good";
-
-    orderList.innerHTML = "";
-    function row(label, price, onRemove) {
-      var li = document.createElement("li");
-      var s = document.createElement("span"); s.textContent = label;
-      var right = document.createElement("span");
-      right.textContent = money(price) + " ";
-      if (onRemove) {
-        var b = document.createElement("button");
-        b.className = "rm"; b.type = "button"; b.textContent = "×";
-        b.setAttribute("aria-label", "Remove " + label);
-        b.addEventListener("click", onRemove);
-        right.appendChild(b);
+  function render() {
+    /* --- the stack in the box --- */
+    var html = '<img class="base-img" src="' + (A.bunBottom || "") + '" alt="Bun base">';
+    layers.forEach(function (l, i) {
+      var anim = i === lastAction ? " just-added" : "";
+      if (l.kind === "sauce") {
+        html += '<div class="sauce-strip' + anim + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + '"></div>';
+      } else {
+        html += '<button type="button" class="layer' + anim + '" data-idx="' + i + '" data-key="' + l.key + '" title="Tap to remove"><img src="' + (A[l.key] || "") + '" alt="' + l.name + '"></button>';
       }
-      li.appendChild(s); li.appendChild(right);
-      orderList.appendChild(li);
-    }
-    row("Bun base + box", BASE_PRICE, null);
-    items.forEach(function (i, idx) {
-      row(i.name, i.price, function () { removeItem(idx); });
     });
-    Object.keys(sides).forEach(function (k) {
-      row(k + " (side)", sides[k], function () { delete sides[k]; syncSideCards(); render(false); });
+    stackEl.innerHTML = html;
+    stackEl.classList.remove("squash"); void stackEl.offsetWidth; stackEl.classList.add("squash");
+
+    /* --- hint --- */
+    if (sealed()) hintEl.textContent = "Sealed with a top bun — that's a burger! Add a side, or check out. 🍔";
+    else if (layers.length === 0) hintEl.textContent = "Your box is empty — tap something tasty on the left.";
+    else if (layers.length >= MAX_ITEMS) hintEl.textContent = "That box is FULL. Respect. Time to check out.";
+    else hintEl.textContent = layers.length + (layers.length === 1 ? " layer" : " layers") + " in — tap a layer to remove it, or keep stacking.";
+
+    /* --- order lines (grouped) --- */
+    var counts = {}, order = [];
+    layers.forEach(function (l) {
+      if (!counts[l.name]) { counts[l.name] = { n: 0, sum: 0 }; order.push(l.name); }
+      counts[l.name].n++; counts[l.name].sum += l.price;
     });
+    var li = '<li><span class="li-name">Bun base (in the box)</span><span>' + money(BASE_PRICE) + "</span></li>";
+    order.forEach(function (name) {
+      var c = counts[name];
+      li += '<li><span class="li-name">' + name + (c.n > 1 ? " ×" + c.n : "") + "</span><span>" + money(c.sum) + "</span></li>";
+    });
+    Object.keys(sidesOn).forEach(function (k) {
+      li += '<li><span class="li-name">' + SIDES[k].name + ' (side)</span><span>' + money(SIDES[k].price) +
+            '</span><button type="button" class="li-x" data-side-off="' + k + '" aria-label="Remove ' + SIDES[k].name + '">✕</button></li>';
+    });
+    linesEl.innerHTML = li;
+    emptyEl.style.display = (layers.length === 0 && Object.keys(sidesOn).length === 0) ? "block" : "none";
     totalEl.textContent = money(total());
-    document.querySelectorAll(".tray").forEach(function (t) {
-      var ing = INGREDIENTS[+t.getAttribute("data-idx")];
-      var used = items.some(function (i) { return i.key === ing.key; });
-      t.classList.toggle("used", used);
-      t.disabled = sealed || (ing.single && used) || items.length >= MAX_ITEMS;
-    });
+    var ns = Object.keys(sidesOn).length;
+    metaEl.textContent = layers.length + (layers.length === 1 ? " layer" : " layers") + (ns ? " · " + ns + (ns === 1 ? " side" : " sides") : "") + " · bun base included";
+    lastAction = -1;
   }
 
-  function addItem(i) {
-    if (sealed || items.length >= MAX_ITEMS) return;
-    items.push(i);
-    if (i.key === "topbun") sealed = true;
-    if (hint) hint.classList.add("off");
-    pop(i.kind === "sauce" ? 700 : 480 + items.length * 24);
-    render(true);
-  }
-  function removeItem(idx) {
-    var gone = items.splice(idx, 1)[0];
-    if (gone && gone.key === "topbun") sealed = false;
-    render(false);
+  function addLayer(entry) {
+    if (layers.length >= MAX_ITEMS) { hintEl.textContent = "That box is FULL. Respect. Time to check out."; return; }
+    if (sealed()) { hintEl.textContent = "Top bun is on! Tap the top bun in the box to take it off first."; stackEl.classList.remove("squash"); void stackEl.offsetWidth; stackEl.classList.add("squash"); return; }
+    if (entry.key === "topBun" && layers.some(function (l) { return l.key === "topBun"; })) return;
+    layers.push(entry); lastAction = layers.length - 1;
+    pop(entry.kind === "sauce" ? 700 : 500);
+    render();
   }
 
-  /* trays */
-  var traysEl = document.getElementById("trays");
-  INGREDIENTS.forEach(function (ing, idx) {
-    var b = document.createElement("button");
-    b.className = "tray"; b.type = "button";
-    b.setAttribute("data-idx", String(idx));
-    b.setAttribute("aria-label", "Add " + ing.name + ", " + money(ing.price));
-    b.innerHTML = '<span class="t-icon">' + ing.icon + '</span>' +
-      '<span class="t-name">' + ing.name + '</span>' +
-      '<span class="t-price">' + money(ing.price) + "</span>";
-    b.addEventListener("click", function () {
-      addItem({ kind: "layer", key: ing.key, name: ing.name, price: ing.price, cls: ing.cls });
-    });
-    traysEl.appendChild(b);
+  document.getElementById("trays").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-add]"); if (!b) return;
+    var key = b.getAttribute("data-add"), d = ING[key]; if (!d) return;
+    addLayer({ kind: "ing", key: key, name: d.name, price: d.price });
   });
-
-  /* sauces */
-  document.querySelectorAll(".bottle").forEach(function (b) {
-    b.addEventListener("click", function () {
-      addItem({ kind: "sauce", key: "sauce-" + b.getAttribute("data-sauce"),
-        name: b.getAttribute("data-sauce") + " sauce", price: SAUCE_PRICE,
-        cls: "l-sauce", color: b.getAttribute("data-color") });
-    });
+  document.getElementById("sauces").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-sauce]"); if (!b) return;
+    var key = b.getAttribute("data-sauce");
+    addLayer({ kind: "sauce", key: key, name: SAUCES[key].name + " drizzle", price: SAUCE_PRICE });
   });
-
-  /* sides */
-  function syncSideCards() {
-    document.querySelectorAll(".side-card").forEach(function (c) {
-      var on = !!sides[c.getAttribute("data-side")];
-      c.classList.toggle("added", on);
-      c.querySelector(".add-btn").textContent = on ? "✓ ADDED" : "+ ADD";
-    });
-  }
+  stackEl.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-idx]"); if (!el) return;
+    layers.splice(parseInt(el.getAttribute("data-idx"), 10), 1);
+    pop(300); render();
+  });
+  linesEl.addEventListener("click", function (e) {
+    var x = e.target.closest("[data-side-off]"); if (!x) return;
+    delete sidesOn[x.getAttribute("data-side-off")]; syncSideCards(); pop(300); render();
+  });
   document.querySelectorAll(".side-card").forEach(function (card) {
-    var name = card.getAttribute("data-side");
-    var price = parseFloat(card.getAttribute("data-price"));
-    card.querySelector(".add-btn").addEventListener("click", function () {
-      if (sides[name]) { delete sides[name]; }
-      else { sides[name] = price; pop(640); }
-      syncSideCards();
-      render(false);
+    card.addEventListener("click", function () {
+      var k = card.getAttribute("data-side");
+      if (sidesOn[k]) delete sidesOn[k]; else { sidesOn[k] = true; pop(620); }
+      syncSideCards(); render();
     });
   });
-
-  /* undo / clear */
+  function syncSideCards() {
+    document.querySelectorAll(".side-card").forEach(function (card) {
+      var on = !!sidesOn[card.getAttribute("data-side")];
+      card.classList.toggle("on", on);
+      card.querySelector(".side-toggle").textContent = on ? "✓ ADDED" : "+ ADD";
+    });
+  }
   document.getElementById("undoBtn").addEventListener("click", function () {
-    if (!items.length) return;
-    var gone = items.pop();
-    if (gone.key === "topbun") sealed = false;
-    render(false);
+    if (!layers.length) return; layers.pop(); pop(300); render();
   });
-  document.getElementById("clearBtn").addEventListener("click", function () {
-    items = []; sealed = false; sides = {};
-    syncSideCards();
-    render(false);
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    layers = []; sidesOn = {}; syncSideCards(); pop(260); render();
   });
 
-  /* red hand cursor inside the builder (fine pointers only) */
-  var builder = document.getElementById("builder");
-  var hand = document.getElementById("handCursor");
-  if (window.matchMedia && matchMedia("(pointer:fine)").matches) {
-    builder.addEventListener("mousemove", function (e) {
-      document.body.classList.add("has-hand");
-      hand.style.left = e.clientX + "px";
-      hand.style.top = e.clientY + "px";
-      hand.textContent = "👆";
-    });
-    builder.addEventListener("mouseleave", function () { document.body.classList.remove("has-hand"); });
-  }
-
-  /* checkout modal */
-  var back = document.getElementById("modalBack");
-  var form = document.getElementById("checkoutForm");
-  var done = document.getElementById("checkoutDone");
+  /* ---------- checkout ---------- */
+  var backdrop = document.getElementById("modalBackdrop");
+  var bodyEl = document.getElementById("modalBody");
+  var successEl = document.getElementById("modalSuccess");
   function openModal() {
-    var parts = ["Bun base"];
-    items.forEach(function (i) { parts.push(i.name); });
-    Object.keys(sides).forEach(function (k) { parts.push(k); });
-    document.getElementById("modalSummary").textContent =
-      parts.join(" · ") + " — Total " + money(total());
-    form.hidden = false; done.hidden = true;
-    back.hidden = false;
-  }
-  function closeModal() { back.hidden = true; }
-  document.getElementById("orderBtn").addEventListener("click", openModal);
-  document.getElementById("navOrderBtn").addEventListener("click", openModal);
-  document.getElementById("modalX").addEventListener("click", closeModal);
-  back.addEventListener("click", function (e) { if (e.target === back) closeModal(); });
-  document.getElementById("placeBtn").addEventListener("click", function () {
-    var name = document.getElementById("fName");
-    var addr = document.getElementById("fAddr");
-    var bad = false;
-    [name, addr].forEach(function (f) {
-      var empty = !f.value.trim();
-      f.style.borderColor = empty ? "#E63329" : "";
-      if (empty) bad = true;
+    var counts = {}, order = [];
+    layers.forEach(function (l) {
+      if (!counts[l.name]) { counts[l.name] = 0; order.push(l.name); }
+      counts[l.name]++;
     });
-    if (bad) return;
+    var parts = order.map(function (n) { return n + (counts[n] > 1 ? " ×" + counts[n] : ""); });
+    var sideNames = Object.keys(sidesOn).map(function (k) { return SIDES[k].name; });
+    document.getElementById("modalSummary").innerHTML =
+      "<strong>Your build:</strong> " + (parts.length ? parts.join(", ") : "just the bun base — a minimalist") +
+      (sideNames.length ? "<br><strong>Sides:</strong> " + sideNames.join(", ") : "") +
+      "<br><strong>Total: " + money(total()) + "</strong>";
+    bodyEl.hidden = false; successEl.hidden = true;
+    backdrop.hidden = false;
+  }
+  function closeModal() { backdrop.hidden = true; }
+  document.getElementById("checkoutBtn").addEventListener("click", openModal);
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("successClose").addEventListener("click", closeModal);
+  backdrop.addEventListener("click", function (e) { if (e.target === backdrop) closeModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !backdrop.hidden) closeModal(); });
+
+  document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("fieldName").value.trim();
+    var addr = document.getElementById("fieldAddress").value.trim();
+    var err = document.getElementById("formError");
+    if (!name || !addr) { err.hidden = false; return; }
+    err.hidden = true;
     var no = "DG-" + Math.floor(1000 + Math.random() * 9000);
-    document.getElementById("doneText").textContent =
-      "Thanks, " + name.value.trim() + " — order " + no + " is on the grill. " +
-      "Your " + (items.length + 1) + "-layer build (" + money(total()) + ") is coming your way.";
-    form.hidden = true; done.hidden = false;
+    document.getElementById("successText").textContent =
+      "Thanks, " + name + " — order " + no + " confirmed: your " + layers.length + "-layer build (" + money(total()) +
+      ") is on the grill and heading to " + addr + ".";
+    bodyEl.hidden = true; successEl.hidden = false;
     pop(880);
   });
-  document.getElementById("doneBtn").addEventListener("click", function () {
-    closeModal();
-    document.getElementById("clearBtn").click();
-    document.getElementById("builder").scrollIntoView({ behavior: "smooth" });
-  });
 
-  render(false);
+  render();
 })();

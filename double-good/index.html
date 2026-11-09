@@ -4,172 +4,195 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DOUBLE GOOD — Build Your Burger</title>
-<meta name="description" content="Double Good — the interactive burger builder. Good things come in layers.">
+<meta name="description" content="DOUBLE GOOD — good things come in layers. Build your own burger, layer by layer, and get it delivered hot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Archivo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header class="nav">
-  <a class="logo" href="#top" aria-label="Double Good home">DOUBLE&nbsp;GOOD</a>
-  <nav class="nav-links">
+  <a class="logo" href="#top" aria-label="Double Good home">
+    <span class="logo-badge">DG</span>
+    <span class="logo-text">DOUBLE<em>GOOD</em></span>
+  </a>
+  <nav class="nav-links" aria-label="Main">
     <a href="#builder">BUILDER</a>
     <a href="#sides">SIDES</a>
     <a href="#how">HOW IT WORKS</a>
   </nav>
-  <button class="nav-cta" id="navOrderBtn" type="button">ORDER NOW</button>
+  <a class="btn btn-blue nav-cta" href="#builder">ORDER NOW</a>
 </header>
 
 <main id="top">
 
-  <!-- HERO -->
+  <!-- ============ HERO ============ -->
   <section class="hero">
-    <div class="hero-copy">
-      <p class="hero-kicker">DOUBLE GOOD — BUILD YOUR BURGER</p>
-      <h1>Good things<br>come in <span class="hl">layers.</span></h1>
-      <p class="hero-sub">A little messy, a lot of good. Build your burger, sauce it up, pile it high — and we will bring it to your door.</p>
-      <a class="cta" href="#builder">OPEN YOUR CUSTOM BUILD</a>
-      <p class="hero-note">Builds from $4.00 · Ready in about a minute</p>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="hero-kicker">★ DOUBLE GOOD BURGER CO. ★</p>
+        <h1>Good things come in <span class="hl">layers.</span></h1>
+        <p class="hero-sub">A little messy, a lot of good. Stack it your way — every layer lands fresh in the box, exactly how you built it.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-blue btn-big" href="#builder">OPEN YOUR CUSTOM BUILD</a>
+          <a class="btn btn-ghost" href="#how">How it works</a>
+        </div>
+        <p class="hero-note">Bun base included · from $4.00 · ready in ~15 min</p>
+      </div>
+      <div class="hero-visual">
+        <img class="hero-img" data-asset="heroBox" alt="A big yellow Double Good takeaway box on a steel kitchen counter">
+        <img class="float-img fi-1" data-asset="tomato" alt="">
+        <img class="float-img fi-2" data-asset="pickles" alt="">
+        <span class="hero-badge">100%<br>YOUR WAY</span>
+      </div>
     </div>
-    <div class="hero-art" aria-hidden="true">
-      <svg class="hero-box" viewBox="0 0 340 260">
-        <path d="M30 90 L170 40 L310 90 L292 220 L48 220 Z" fill="#FFC907"/>
-        <path d="M30 90 L170 40 L310 90 L302 128 L38 128 Z" fill="#FFD83D"/>
-        <path d="M38 128 L302 128 L292 220 L48 220 Z" fill="#FFC907"/>
-        <text x="170" y="112" text-anchor="middle" class="box-brand">DOUBLE GOOD</text>
-        <g stroke="#E63329" stroke-width="5" fill="none" stroke-linecap="round">
-          <path d="M96 168 q14 -16 28 0 q14 -16 28 0"/>
-          <path d="M92 184 h64" stroke-dasharray="2 10"/>
-          <path d="M96 200 q14 -14 28 0 q14 -14 28 0"/>
-        </g>
-        <g stroke="#E63329" stroke-width="5" fill="none" stroke-linecap="round">
-          <path d="M206 176 v-26 M206 150 q-14 -4 -12 -18 M206 150 q14 -4 12 -18 M194 158 q-12 2 -16 -8 M218 158 q12 2 16 -8"/>
-        </g>
-        <text x="238" y="205" text-anchor="middle" class="box-small">SAUCE IT UP</text>
-      </svg>
-      <div class="float f1">🍔</div>
-      <div class="float f2">🍟</div>
-      <div class="float f3">🥒</div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>FRESH OFF THE GRILL ✦ STACK IT HIGH ✦ SAUCE IT UP ✦ DOUBLE GOOD ✦ FRESH OFF THE GRILL ✦ STACK IT HIGH ✦ SAUCE IT UP ✦ DOUBLE GOOD ✦&nbsp;</span>
+        <span>FRESH OFF THE GRILL ✦ STACK IT HIGH ✦ SAUCE IT UP ✦ DOUBLE GOOD ✦ FRESH OFF THE GRILL ✦ STACK IT HIGH ✦ SAUCE IT UP ✦ DOUBLE GOOD ✦&nbsp;</span>
+      </div>
     </div>
-    <div class="marquee" aria-hidden="true"><div class="marquee-in">
-      <span>100% SMASHED FRESH</span><i>★</i><span>BUNS BAKED DAILY</span><i>★</i><span>SAUCE IT UP</span><i>★</i><span>PILE IT HIGH</span><i>★</i><span>DOUBLE GOOD</span><i>★</i>
-      <span>100% SMASHED FRESH</span><i>★</i><span>BUNS BAKED DAILY</span><i>★</i><span>SAUCE IT UP</span><i>★</i><span>PILE IT HIGH</span><i>★</i><span>DOUBLE GOOD</span><i>★</i>
-    </div></div>
   </section>
 
-  <!-- BUILDER -->
+  <!-- ============ BUILDER ============ -->
   <section class="builder" id="builder">
-    <h2 class="sec-title">Make it yours</h2>
-    <p class="sec-sub">Tap a tray to drop it in the box. Stack as high as you dare.</p>
+    <div class="builder-head">
+      <h2>Make it <span class="hl-blue">yours</span></h2>
+      <p>Tap an ingredient — watch it land in your box. Tap a layer in the box to take it back out.</p>
+    </div>
 
-    <div class="counter">
-      <!-- LEFT: ingredient trays -->
-      <div class="trays" id="trays" aria-label="Ingredients"></div>
-
-      <!-- CENTRE: sauces + the box -->
-      <div class="stage">
-        <div class="sauces" id="sauces" aria-label="Sauces">
-          <button class="bottle b-mustard" type="button" data-sauce="Mustard" data-color="#FFC907" aria-label="Add mustard">
-            <span class="b-cap"></span><span class="b-body">DOUBLE<br>GOOD</span><span class="b-name">Mustard</span>
-          </button>
-          <button class="bottle b-ketchup" type="button" data-sauce="Ketchup" data-color="#E63329" aria-label="Add ketchup">
-            <span class="b-cap"></span><span class="b-body">DOUBLE<br>GOOD</span><span class="b-name">Ketchup</span>
-          </button>
-          <button class="bottle b-mayo" type="button" data-sauce="Mayo" data-color="#FFF6E3" aria-label="Add mayo">
-            <span class="b-cap blue"></span><span class="b-body dark">DOUBLE<br>GOOD</span><span class="b-name">Mayo</span>
-          </button>
+    <div class="builder-grid">
+      <!-- ingredient trays -->
+      <div class="tray-panel" aria-label="Ingredients">
+        <h3 class="panel-title">FROM THE COUNTER</h3>
+        <div class="trays" id="trays">
+          <button class="tray" data-add="patty"><span class="tray-media"><img data-asset="patty" alt="Beef patty"></span><span class="tray-name">Patty</span><span class="tray-price">$3.50</span></button>
+          <button class="tray" data-add="cheese"><span class="tray-media"><img data-asset="cheese" alt="Melted cheese"></span><span class="tray-name">Cheese</span><span class="tray-price">$1.20</span></button>
+          <button class="tray" data-add="tomato"><span class="tray-media"><img data-asset="tomato" alt="Tomato slices"></span><span class="tray-name">Tomato</span><span class="tray-price">$0.60</span></button>
+          <button class="tray" data-add="lettuce"><span class="tray-media"><img data-asset="lettuce" alt="Lettuce"></span><span class="tray-name">Lettuce</span><span class="tray-price">$0.50</span></button>
+          <button class="tray" data-add="pickles"><span class="tray-media"><img data-asset="pickles" alt="Pickles"></span><span class="tray-name">Pickles</span><span class="tray-price">$0.40</span></button>
+          <button class="tray" data-add="onion"><span class="tray-media"><img data-asset="onion" alt="Onion rings"></span><span class="tray-name">Onions</span><span class="tray-price">$0.40</span></button>
+          <button class="tray" data-add="egg"><span class="tray-media"><img data-asset="egg" alt="Fried egg"></span><span class="tray-name">Fried Egg</span><span class="tray-price">$1.50</span></button>
+          <button class="tray tray-topbun" data-add="topBun"><span class="tray-media"><img data-asset="topBun" alt="Top bun"></span><span class="tray-name">Top Bun — finish it!</span><span class="tray-price">$1.00</span></button>
         </div>
 
-        <div class="boxwrap">
-          <div class="box">
-            <div class="paper">DOUBLE GOOD · DOUBLE GOOD · DOUBLE GOOD</div>
+        <h3 class="panel-title sauces-title">SAUCE IT UP · $0.30</h3>
+        <div class="sauces" id="sauces">
+          <button class="sauce-btn" data-sauce="mustard">
+            <span class="bottle-wrap"><img data-asset="mustard" alt="Mustard bottle"><span class="bottle-label">DOUBLE GOOD</span></span>
+            <span>Mustard</span>
+          </button>
+          <button class="sauce-btn" data-sauce="ketchup">
+            <span class="bottle-wrap"><img data-asset="ketchup" alt="Ketchup bottle"><span class="bottle-label">DOUBLE GOOD</span></span>
+            <span>Ketchup</span>
+          </button>
+          <button class="sauce-btn" data-sauce="mayo">
+            <span class="bottle-wrap"><img data-asset="mayo" alt="Mayo bottle"><span class="bottle-label">DOUBLE GOOD</span></span>
+            <span>Mayo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- the box / stage -->
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <div class="stack-zone">
             <div class="stack" id="stack" aria-live="polite"></div>
-            <div class="box-front">DOUBLE GOOD</div>
+            <div class="box" aria-hidden="true">
+              <div class="box-paper"></div>
+              <div class="box-front">
+                <svg class="box-hand" viewBox="0 0 100 100" aria-hidden="true"><path d="M35 92 V52 a6 6 0 0 1 12 0 V30 a6 6 0 0 1 12 0 v-6 a6 6 0 0 1 12 0 v8 a6 6 0 0 1 12 0 v26 c0 20 -12 34 -28 34 c-9 0 -15 -3 -20 -9 z" fill="none" stroke="#E63329" stroke-width="5" stroke-linejoin="round"/></svg>
+                <span class="box-brand">DOUBLE GOOD</span>
+              </div>
+            </div>
+            <p class="stage-hint" id="stageHint">Your box is empty — tap something tasty on the left.</p>
           </div>
-          <p class="stack-meta"><span id="layerCount">1</span> layers · <span id="stackState">bun base ready</span></p>
         </div>
-
         <div class="stage-actions">
-          <button class="btn ghost" id="undoBtn" type="button">↩ Undo layer</button>
-          <button class="btn ghost" id="clearBtn" type="button">Start over</button>
+          <button class="btn btn-ghost btn-small" id="undoBtn" type="button">↩ Undo layer</button>
+          <button class="btn btn-ghost btn-small" id="resetBtn" type="button">Start over</button>
         </div>
       </div>
 
-      <!-- RIGHT: sides + order -->
-      <div class="side-col">
-        <div class="sides" id="sides">
-          <h3>Better together:</h3>
-          <div class="side-card" data-side="Fries" data-price="2.90">
-            <div class="side-art fries" aria-hidden="true"></div>
-            <div class="side-info"><strong>Fries</strong><span>$2.90</span></div>
-            <button class="add-btn" type="button">+ ADD</button>
-          </div>
-          <div class="side-card" data-side="Onion Rings" data-price="3.40">
-            <div class="side-art rings" aria-hidden="true"></div>
-            <div class="side-info"><strong>Onion Rings</strong><span>$3.40</span></div>
-            <button class="add-btn" type="button">+ ADD</button>
-          </div>
-          <div class="side-card" data-side="Curly Fries" data-price="3.20">
-            <div class="side-art curly" aria-hidden="true"></div>
-            <div class="side-info"><strong>Curly Fries</strong><span>$3.20</span></div>
-            <button class="add-btn" type="button">+ ADD</button>
-          </div>
-        </div>
-
-        <div class="order">
-          <h3>Your build</h3>
-          <ul class="order-list" id="orderList"></ul>
-          <div class="order-row total"><span>Total</span><strong id="totalPrice">$4.00</strong></div>
-          <button class="btn order-btn" id="orderBtn" type="button">PLACE MY ORDER</button>
-          <p class="demo-note">Demo kitchen — no real orders, just good layers.</p>
-        </div>
-      </div>
+      <!-- order panel -->
+      <aside class="order-panel" aria-label="Your order">
+        <h3 class="panel-title">YOUR ORDER</h3>
+        <ul class="order-lines" id="orderLines"></ul>
+        <div class="order-empty" id="orderEmpty">Nothing yet — your masterpiece awaits.</div>
+        <div class="order-total-row"><span>Total</span><strong id="orderTotal">$4.00</strong></div>
+        <p class="order-meta" id="orderMeta">Bun base $4.00 included</p>
+        <button class="btn btn-red btn-big order-cta" id="checkoutBtn" type="button">CHECKOUT</button>
+      </aside>
     </div>
-    <div class="hand-hint" id="handHint" aria-hidden="true">👆</div>
-    <div class="hand-cursor" id="handCursor" aria-hidden="true"></div>
   </section>
 
-  <!-- HOW IT WORKS -->
+  <!-- ============ SIDES ============ -->
+  <section class="sides" id="sides">
+    <div class="sides-head">
+      <h2>Better <span class="hl">together</span></h2>
+      <p>Every great build deserves a sidekick. Tap to add one to your order.</p>
+    </div>
+    <div class="side-cards">
+      <button class="side-card" data-side="fries">
+        <img class="side-img" data-asset="fries" alt="Carton of fries">
+        <span class="side-info"><span class="side-name">Fries</span><span class="side-desc">Golden, salty, dangerously snackable.</span></span>
+        <span class="side-price">$2.90</span><span class="side-toggle">+ ADD</span>
+      </button>
+      <button class="side-card" data-side="rings">
+        <img class="side-img" data-asset="rings" alt="Carton of onion rings">
+        <span class="side-info"><span class="side-name">Onion Rings</span><span class="side-desc">Crisp hoops of pure joy.</span></span>
+        <span class="side-price">$3.40</span><span class="side-toggle">+ ADD</span>
+      </button>
+      <button class="side-card" data-side="curly">
+        <img class="side-img" data-asset="curly" alt="Carton of curly fries">
+        <span class="side-info"><span class="side-name">Curly Fries</span><span class="side-desc">Twisty, seasoned, gone in seconds.</span></span>
+        <span class="side-price">$3.20</span><span class="side-toggle">+ ADD</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
   <section class="how" id="how">
-    <h2 class="sec-title dark">How it works</h2>
-    <div class="steps">
-      <div class="step"><span class="step-n">1</span><h3>Pick your layers</h3><p>Trays on the left, box in the middle. Every tap drops a layer in — patty, cheese, pickles, the works.</p></div>
-      <div class="step"><span class="step-n">2</span><h3>Sauce it up</h3><p>Mustard, ketchup or mayo — squeeze as many as you like. A burger without sauce is just a sandwich.</p></div>
-      <div class="step"><span class="step-n">3</span><h3>We bring it over</h3><p>Add your sides, place the order, and it is on its way — still warm, still stacked.</p></div>
+    <h2>How it <span class="hl-blue">works</span></h2>
+    <div class="how-steps">
+      <div class="how-step"><span class="how-num">1</span><h3>Build it</h3><p>Stack layers in the builder until it looks like trouble (the good kind).</p></div>
+      <div class="how-step"><span class="how-num">2</span><h3>We fire it up</h3><p>Your exact build hits the grill the second you check out. Nothing pre-made.</p></div>
+      <div class="how-step"><span class="how-num">3</span><h3>Good food, your way</h3><p>Boxed, sealed and on its way — still warm, still stacked, still yours.</p></div>
     </div>
   </section>
 
+  <footer class="footer">
+    <span class="logo-text">DOUBLE<em>GOOD</em></span>
+    <p>Good things come in layers. A concept experience — no real burgers were delivered.</p>
+  </footer>
 </main>
 
-<footer class="footer">
-  <span class="logo small">DOUBLE&nbsp;GOOD</span>
-  <p>Good things come in layers. Built as an interactive design demo.</p>
-</footer>
-
-<!-- CHECKOUT MODAL -->
-<div class="modal-back" id="modalBack" hidden>
+<!-- ============ CHECKOUT MODAL ============ -->
+<div class="modal-backdrop" id="modalBackdrop" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <button class="modal-x" id="modalX" type="button" aria-label="Close">×</button>
-    <div id="checkoutForm">
-      <h2 id="modalTitle">Good food. Coming your way.</h2>
-      <p class="modal-sub">One last thing — where is this masterpiece going?</p>
-      <label>Your name<input id="fName" type="text" placeholder="e.g. Alex Burger" autocomplete="name"></label>
-      <label>Address<input id="fAddr" type="text" placeholder="Street, house, flat" autocomplete="street-address"></label>
-      <label>Phone<input id="fPhone" type="tel" placeholder="So the rider can find you" autocomplete="tel"></label>
-      <div class="modal-summary" id="modalSummary"></div>
-      <button class="btn order-btn" id="placeBtn" type="button">Place my order</button>
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close">✕</button>
+    <div class="modal-body" id="modalBody">
+      <h3 id="modalTitle">Almost there</h3>
+      <p class="modal-sub">Where is this masterpiece going?</p>
+      <form id="checkoutForm" novalidate>
+        <label>Your name<input type="text" id="fieldName" autocomplete="name" placeholder="e.g. Ahmed"></label>
+        <label>Delivery address<input type="text" id="fieldAddress" autocomplete="street-address" placeholder="Street, building, flat…"></label>
+        <p class="form-error" id="formError" hidden>Please add your name and address so we can find you.</p>
+        <div class="modal-summary" id="modalSummary"></div>
+        <button class="btn btn-red btn-big" type="submit">Place my order</button>
+      </form>
     </div>
-    <div id="checkoutDone" hidden>
-      <div class="done-check" aria-hidden="true">✓</div>
-      <h2>Order in!</h2>
-      <p class="modal-sub" id="doneText">Your burger is on the grill.</p>
-      <button class="btn order-btn" id="doneBtn" type="button">BACK TO THE BUILDER</button>
+    <div class="modal-body modal-success" id="modalSuccess" hidden>
+      <div class="success-hand" aria-hidden="true">👍</div>
+      <h3>Good food.<br>Coming your way.</h3>
+      <p id="successText"></p>
+      <button class="btn btn-blue" id="successClose" type="button">Back to building</button>
     </div>
   </div>
 </div>
 
+<script src="assets-data.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
