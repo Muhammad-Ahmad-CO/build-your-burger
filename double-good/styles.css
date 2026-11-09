@@ -280,3 +280,5 @@ img{user-select:none;-webkit-user-drag:none}
   filter:drop-shadow(0 16px 14px rgba(29,26,20,.35))}
 .comp-main.sealed .finished-burger{opacity:1;transform:translateX(-50%) scale(1)}
 .closed-box::after{content:"";position:absolute;inset:12px;border:2px solid rgba(29,26,20,.20);border-radius:13px;pointer-events:none}
+
+.layer[data-key="bunTop"]{margin-bottom:-104px}

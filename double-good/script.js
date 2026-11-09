@@ -8,6 +8,7 @@
 
   var ING = {
     bun:     { name: "Brioche bun", price: 1.00, asset: "bunBottom" },
+    bunTop:  { name: "Brioche bun", price: 1.00, asset: "topBun" },
     patty:   { name: "Smash patty", price: 3.50 },
     tomato:  { name: "Tomato",      price: 0.60 },
     cheese:  { name: "Cheddar",     price: 1.20 },
@@ -118,13 +119,16 @@
   /* ---------------- render ---------------- */
   function render() {
     var html = "";
+    var ingPos = 0;
     layers.forEach(function (l, i) {
       var anim = i === lastAction ? " just-added" : "";
       if (l.kind === "sauce") {
         html += '<div class="sauce-strip' + anim + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + '"></div>';
       } else {
         var asset = (ING[l.key] && ING[l.key].asset) || l.key;
-        html += '<button type="button" class="layer' + anim + '" data-idx="' + i + '" data-key="' + l.key + '" title="Tap to remove"><img src="' + (A[asset] || "") + '" alt="' + l.name + '"></button>';
+        var baseW = (l.key === "tomato" || l.key === "pickles") ? 200 : 196;
+        var wdt = Math.max(170, baseW - ingPos * 4); ingPos++;
+        html += '<button type="button" class="layer' + anim + '" data-idx="' + i + '" data-key="' + l.key + '" title="Tap to remove"><img style="width:' + wdt + 'px" src="' + (A[asset] || "") + '" alt="' + l.name + '"></button>';
       }
     });
     stackEl.innerHTML = html;
@@ -165,7 +169,7 @@
 
     /* tub badges: how many of each ingredient are already in */
     var byKey = {};
-    layers.forEach(function (l) { if (l.kind === "ing") byKey[l.key] = (byKey[l.key] || 0) + 1; });
+    layers.forEach(function (l) { if (l.kind === "ing") { var bk = l.key === "bunTop" ? "bun" : l.key; byKey[bk] = (byKey[bk] || 0) + 1; } });
     document.querySelectorAll("#trays .tub").forEach(function (tub) {
       var n = byKey[tub.getAttribute("data-add")] || 0;
       var badge = tub.querySelector(".tub-badge");
@@ -185,6 +189,10 @@
   function addLayer(entry) {
     if (layers.length >= MAX_ITEMS) { hintEl.textContent = "That box is FULL. Respect."; SFX.buzz(); return; }
     if (sealed()) { hintEl.textContent = "It's topped off! Undo the top bun to keep stacking."; SFX.buzz(); return; }
+    if (entry.kind === "ing" && entry.key === "bun" &&
+        layers.some(function (x) { return x.key === "bun" || x.key === "bunTop"; })) {
+      entry = { kind: "ing", key: "bunTop", name: entry.name, price: entry.price };
+    }
     layers.push(entry); lastAction = layers.length - 1; lastAddedName = entry.name;
     if (entry.kind === "sauce") {
       SFX.squirt();
@@ -203,7 +211,10 @@
     if (!img || !img.getBoundingClientRect) { addLayer(entry); return; }
     var r = img.getBoundingClientRect();
     var target = document.querySelector(".comp-main").getBoundingClientRect();
-    var asset = entry.kind === "sauce" ? entry.key : ((ING[entry.key] && ING[entry.key].asset) || entry.key);
+    var effKey = entry.key;
+    if (entry.kind === "ing" && effKey === "bun" &&
+        layers.some(function (x) { return x.key === "bun" || x.key === "bunTop"; })) effKey = "bunTop";
+    var asset = entry.kind === "sauce" ? entry.key : ((ING[effKey] && ING[effKey].asset) || effKey);
     var clone = document.createElement("img");
     clone.src = A[asset] || img.src;
     clone.style.cssText = "position:fixed;z-index:300;pointer-events:none;left:" + r.left + "px;top:" + r.top +
