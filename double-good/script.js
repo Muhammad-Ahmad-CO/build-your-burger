@@ -478,6 +478,30 @@
     });
   }
 
+  /* ---------- v26: specs packing sequence (scroll-scrubbed) ---------- */
+  var packStage = document.getElementById("packStage");
+  if (packStage && window.gsap && window.ScrollTrigger && !reduceMotionQ) {
+    gsap.registerPlugin(ScrollTrigger);
+    var packMM = gsap.matchMedia();
+    packMM.add("(min-width: 821px)", function () {
+      var caps = packStage.querySelectorAll(".tpack-cap");
+      var tl = gsap.timeline({
+        scrollTrigger: { trigger: packStage, start: "top 72%", end: "bottom -30%", scrub: 1 }
+      });
+      tl.from(".pi-burger", { y: -190, autoAlpha: 0, duration: 1, ease: "power2.out" })
+        .to(caps[0], { autoAlpha: 0, duration: .2 }, "+=.15")
+        .from(".pi-fries", { y: -190, autoAlpha: 0, duration: 1, ease: "power2.out" })
+        .to(caps[1], { autoAlpha: 1, duration: .2 }, "<")
+        .to(caps[1], { autoAlpha: 0, duration: .2 }, "+=.15")
+        .from(".pi-sauce", { y: -170, autoAlpha: 0, duration: 1, ease: "power2.out" })
+        .to(caps[2], { autoAlpha: 1, duration: .2 }, "<")
+        .to(caps[2], { autoAlpha: 0, duration: .2 }, "+=.15")
+        .to("#packLid", { autoAlpha: 1, y: 96, rotateX: 0, duration: 1, ease: "power2.inOut" })
+        .to(caps[3], { autoAlpha: 1, duration: .2 }, "<");
+      return function () { tl.kill(); };
+    });
+  }
+
   /* ---------- motion: GSAP entrance + scroll reveals (progressive enhancement) ---------- */
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (window.gsap && !reduceMotion) {

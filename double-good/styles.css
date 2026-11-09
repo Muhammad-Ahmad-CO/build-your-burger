@@ -474,3 +474,20 @@ body{background:#EFEFEF}
   .tframe{width:92vw}
   .ttrack .tdetail{grid-template-columns:1fr;min-height:0}
 }
+
+/* v26: scroll-driven packing sequence in the specs section */
+.tpack{padding:30px 20px 10px;text-align:center}
+.tpack-box{position:relative;width:min(560px,90vw);height:330px;margin:0 auto}
+.tpack-art{position:absolute;inset:0;width:100%;height:100%}
+.tpack-item{position:absolute;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(31,31,31,.25))}
+.pi-burger{width:215px;left:15%;bottom:16%}
+.pi-fries{width:118px;left:52%;bottom:18%}
+.pi-sauce{width:74px;left:76%;bottom:20%}
+.tpack-lid{position:absolute;left:6%;right:6%;top:2%;height:64px;background:#EF3205;color:#fff;
+  display:flex;align-items:center;justify-content:center;transform-origin:top center;
+  font-family:'Archivo',sans-serif;font-weight:800;font-size:24px;letter-spacing:.02em;
+  opacity:0;transform:translateY(-26px) rotateX(62deg)}
+.tpack-caps{position:relative;height:34px;margin-top:16px}
+.tpack-cap{position:absolute;left:0;right:0;margin:0;font-family:'Archivo',sans-serif;
+  font-size:18.5px;color:#1F1F1F;opacity:0}
+.tpack-cap[data-cap="0"]{opacity:1}
