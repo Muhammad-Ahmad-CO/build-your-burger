@@ -116,6 +116,18 @@
     if (soundOn) { ac(); SFX.side(); }
   });
 
+  /* glossy drizzle: a rounded zigzag stroke with drips + a light highlight */
+  function drizzleURI(color) {
+    var pts = "M4 9 L20 17 L36 7 L54 18 L70 8 L88 16 L104 7 L122 18 L138 8 L156 17 L172 7 L188 15 L197 10";
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 26'>" +
+      "<path d='" + pts + "' fill='none' stroke='" + color + "' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/>" +
+      "<circle cx='20' cy='20' r='3' fill='" + color + "'/><circle cx='88' cy='19' r='2.6' fill='" + color + "'/>" +
+      "<circle cx='122' cy='21' r='3' fill='" + color + "'/><circle cx='172' cy='12' r='2.4' fill='" + color + "'/>" +
+      "<path d='" + pts + "' transform='translate(0,-2.6)' fill='none' stroke='rgba(255,255,255,.40)' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/>" +
+      "</svg>";
+    return "url('data:image/svg+xml," + encodeURIComponent(svg).replace(/'/g, "%27") + "')";
+  }
+
   /* ---------------- render ---------------- */
   function render() {
     var html = "";
@@ -123,7 +135,7 @@
     layers.forEach(function (l, i) {
       var anim = i === lastAction ? " just-added" : "";
       if (l.kind === "sauce") {
-        html += '<div class="sauce-strip' + anim + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + '"></div>';
+        html += '<div class="sauce-strip' + anim + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + ';background-image:' + drizzleURI(SAUCES[l.key].color) + '"></div>';
       } else {
         var asset = (ING[l.key] && ING[l.key].asset) || l.key;
         var baseW = (l.key === "tomato" || l.key === "pickles") ? 200 : 196;
