@@ -173,6 +173,7 @@
       tub.classList.toggle("used", n > 0);
     });
     document.querySelector(".comp-main").classList.toggle("is-empty", layers.length === 0);
+    document.querySelector(".comp-main").classList.toggle("sealed", sealed());
 
     /* sides resting in the box's side compartment */
     sideDropsEl.innerHTML = Object.keys(sidesOn).map(function (k) {
