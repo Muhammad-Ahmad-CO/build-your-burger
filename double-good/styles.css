@@ -139,24 +139,24 @@ img{user-select:none;-webkit-user-drag:none}
 .stack{display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;width:100%;flex:1}
 .layer{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;margin:0 0 -104px;position:relative}
 .layer:first-child{margin-bottom:0}
-.layer img{display:block;width:196px;max-width:66vw;margin:0 auto;pointer-events:none;
+.layer img{display:block;width:196px;max-width:66vw;margin:0 auto;pointer-events:none;filter:drop-shadow(0 9px 8px rgba(29,26,20,.30));
   filter:drop-shadow(0 6px 6px rgba(29,26,20,.35))}
-.layer[data-key="patty"]{margin-bottom:-84px}
-.layer[data-key="cheese"]{margin-bottom:-86px}
-.layer[data-key="tomato"]{margin-bottom:-64px}
+.layer[data-key="patty"]{margin-bottom:-100px}
+.layer[data-key="cheese"]{margin-bottom:-104px}
+.layer[data-key="tomato"]{margin-bottom:-80px}
 .layer[data-key="tomato"] img{width:200px}
-.layer[data-key="lettuce"]{margin-bottom:-90px}
-.layer[data-key="pickles"]{margin-bottom:-66px}
+.layer[data-key="lettuce"]{margin-bottom:-108px}
+.layer[data-key="pickles"]{margin-bottom:-82px}
 .layer[data-key="pickles"] img{width:200px}
-.layer[data-key="onion"]{margin-bottom:-84px}
+.layer[data-key="onion"]{margin-bottom:-124px}
 .layer[data-key="onion"] img{width:196px}
-.layer[data-key="egg"]{margin-bottom:-74px}
-.layer[data-key="topBun"]{margin-bottom:-88px}
+.layer[data-key="egg"]{margin-bottom:-90px}
+.layer[data-key="topBun"]{margin-bottom:-104px}
 .layer.just-added img{animation:dropIn .38s cubic-bezier(.2,1.6,.4,1)}
 @keyframes dropIn{0%{transform:translateY(-52px) scale(1.04);opacity:0}60%{opacity:1}100%{transform:translateY(0) scale(1)}}
 .stack.squash .layer img{animation:squash .22s ease}
 @keyframes squash{40%{transform:scaleY(.93)}}
-.sauce-strip{width:184px;max-width:58vw;height:16px;margin:64px auto -80px;position:relative;z-index:5;flex:none;
+.sauce-strip{width:184px;max-width:58vw;height:16px;margin:88px auto -104px;position:relative;z-index:5;flex:none;
   background:var(--sauce);cursor:pointer;
   clip-path:polygon(0 0,100% 0,100% 45%,96% 100%,92% 45%,88% 100%,84% 45%,80% 100%,76% 45%,72% 100%,68% 45%,64% 100%,60% 45%,56% 100%,52% 45%,48% 100%,44% 45%,40% 100%,36% 45%,32% 100%,28% 45%,24% 100%,20% 45%,16% 100%,12% 45%,8% 100%,4% 45%,0 100%);
   filter:drop-shadow(0 2px 2px rgba(29,26,20,.3))}
