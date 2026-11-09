@@ -140,7 +140,7 @@
       return "<path d='" + bands + "' transform='translate(0," + dy + ")' fill='none' stroke='" + stroke + "' stroke-width='" + w + "' stroke-linecap='round'/>";
     }
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 58'>" +
-      "<clipPath id='e'><ellipse cx='100' cy='29' rx='98' ry='27'/></clipPath>" +
+      "<clipPath id='e'><ellipse cx='100' cy='29' rx='93' ry='27'/></clipPath>" +
       "<g clip-path='url(#e)'>" +
       pass(2.5, "rgba(60,30,0,.20)", 12) +
       pass(0, color, 10) +
