@@ -8,9 +8,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Archivo:wght@400;500;600;700;800&family=Michroma&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=22">
+<link rel="stylesheet" href="styles.css?v=23">
 </head>
 <body>
+
+<!-- ============ PRELOADER (One-style) ============ -->
+<div class="tpreloader" id="preloader" aria-hidden="true">
+  <div class="tpre-word">Stacking<span class="tred-dot">.</span></div>
+  <div class="tpre-status" id="preStatus">Smashing the patty...</div>
+</div>
 
 <header class="tnav">
   <div class="tnav-left">
@@ -141,21 +147,29 @@
   <section class="tclassics" id="classics">
     <h2 class="th2">A DOUBLE GOOD FOR EVERY MOOD.</h2>
     <div class="trow3">
-      <article class="tpanel">
+      <article class="tpanel" data-classic="classic">
         <img data-asset="finishedBurger" alt="The Classic burger">
         <p class="tpanel-desc">Smash patty, cheddar, lettuce, tomato and house sauce. The one that started it.</p>
         <div class="tpanel-foot"><button class="tload" data-preset="classic" type="button">Load it in the builder &darr;</button><span class="tpanel-name">The Classic.</span></div>
       </article>
-      <article class="tpanel">
+      <article class="tpanel" data-classic="double">
         <img data-asset="classicDouble" alt="The Double burger">
         <p class="tpanel-desc">Two patties, double cheddar, pickles under the lid and ketchup. No regrets.</p>
         <div class="tpanel-foot"><button class="tload" data-preset="double" type="button">Load it in the builder &darr;</button><span class="tpanel-name">The Double.</span></div>
       </article>
-      <article class="tpanel">
+      <article class="tpanel" data-classic="garden">
         <img data-asset="classicGarden" alt="The Garden burger">
         <p class="tpanel-desc">Beetroot patty, lettuce, tomato, red onion and garlic mayo. Bright and crunchy.</p>
         <div class="tpanel-foot"><button class="tload" data-preset="garden" type="button">Load it in the builder &darr;</button><span class="tpanel-name">The Garden.</span></div>
       </article>
+    </div>
+    <div class="tdetail" id="classicDetail">
+      <div class="tdetail-red" aria-hidden="true"><div class="tdetail-diag" id="detailDiag"></div></div>
+      <div class="tdetail-photo"><img id="detailImg" data-asset="finishedBurger" alt="Selected classic burger"></div>
+      <div class="tdetail-info">
+        <p class="tdetail-desc" id="detailDesc"></p>
+        <button class="tload big" id="detailLoad" data-preset="classic" type="button">Load it in the builder &darr;</button>
+      </div>
     </div>
   </section>
 
@@ -166,8 +180,9 @@
       <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">TOP BUN</div><div class="texp-sub">BAKED EVERY MORNING</div></div><span class="texp-line"></span></div><img data-asset="topBun" alt="Top bun"><div></div></div>
       <div class="texp-row"><div></div><img data-asset="cheese" alt="Cheddar"><div class="texp-lab r"><span class="texp-line"></span><div><div class="texp-name">CHEDDAR</div><div class="texp-sub">PROPERLY MELTED</div></div></div></div>
       <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">SMASH PATTY</div><div class="texp-sub">SMASHED TO ORDER</div></div><span class="texp-line"></span></div><img data-asset="patty" alt="Smash patty"><div></div></div>
-      <div class="texp-row"><div></div><img data-asset="lettuce" alt="Lettuce"><div class="texp-lab r"><span class="texp-line"></span><div><div class="texp-name">LETTUCE</div><div class="texp-sub">CRISP AND COLD</div></div></div></div>
-      <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">THE HEEL</div><div class="texp-sub">HOLDS IT ALL TOGETHER</div></div><span class="texp-line"></span></div><img data-asset="bunBottom" alt="Bun heel"><div></div></div>
+      <div class="texp-row"><div></div><img data-asset="pickles" alt="Pickles"><div class="texp-lab r"><span class="texp-line"></span><div><div class="texp-name">PICKLES</div><div class="texp-sub">ALWAYS FRESH</div></div></div></div>
+      <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">HOUSE SAUCE</div><div class="texp-sub">SQUEEZED, NEVER POURED</div></div><span class="texp-line"></span></div><img class="texp-sauce" data-asset="ketchup" alt="Sauce bottle"><div></div></div>
+      <div class="texp-row"><div></div><img data-asset="bunBottom" alt="Bun heel"><div class="texp-lab r"><span class="texp-line"></span><div><div class="texp-name">THE HEEL</div><div class="texp-sub">HOLDS IT ALL TOGETHER</div></div></div></div>
     </div>
   </section>
 
@@ -230,6 +245,11 @@
     <p class="ttimer-2">In that time, we have stacked <span id="timerBurgerCount">0</span> burgers. What are you waiting for?</p>
   </section>
 
+  <div class="tphotos">
+    <img data-asset="footPoster" alt="Double Good illuminated menu poster">
+    <img data-asset="footKitchen" alt="Inside the Double Good kitchen">
+  </div>
+
   <footer class="tfooter">
     <div class="tfooter-contact">
       <p>Built on the web.</p>
@@ -257,9 +277,9 @@
 <div class="ttimer-widget" aria-hidden="true"><span class="ttimer-dot"></span><span id="timerWidget">00:00min</span></div>
 
 <div id="handCursor" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M35 92 V52 a6 6 0 0 1 12 0 V30 a6 6 0 0 1 12 0 v-6 a6 6 0 0 1 12 0 v8 a6 6 0 0 1 12 0 v26 c0 20 -12 34 -28 34 c-9 0 -15 -3 -20 -9 z" fill="#E63329" stroke="#1D1A14" stroke-width="4" stroke-linejoin="round"/></svg></div>
-<script src="assets-data.js?v=22"></script>
+<script src="assets-data.js?v=23"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="script.js?v=22"></script>
+<script src="script.js?v=23"></script>
 </body>
 </html>

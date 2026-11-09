@@ -424,6 +424,46 @@
     var c = document.getElementById("timerBurgerCount"); if (c) c.textContent = Math.floor(secs / 40);
   }, 1000);
 
+  /* ---------- v23: preloader + classics detail stage ---------- */
+  var pre = document.getElementById("preloader");
+  if (pre) {
+    var preLines = ["Smashing the patty...", "Peeling the potatoes...", "Squeezing the sauce...", "Toasting the bun..."];
+    var preI = 0, preStatus = document.getElementById("preStatus"), preHidden = false;
+    var preIv = window.setInterval(function () {
+      preI = (preI + 1) % preLines.length;
+      if (preStatus) preStatus.textContent = preLines[preI];
+    }, 380);
+    var hidePre = function () {
+      if (preHidden) return; preHidden = true;
+      window.clearInterval(preIv);
+      pre.classList.add("done");
+      window.setTimeout(function () { if (pre.parentNode) pre.remove(); }, 650);
+    };
+    window.addEventListener("load", function () { window.setTimeout(hidePre, 750); });
+    window.setTimeout(hidePre, 2800);
+  }
+
+  var DETAILS = {
+    classic: { name: "THE CLASSIC", img: "finishedBurger", desc: "A smashed-to-order patty under properly melted cheddar, crisp lettuce, tomato and our house sauce in a toasted brioche. The one that started it." },
+    double:  { name: "THE DOUBLE",  img: "classicDouble",  desc: "Two patties, two cheddars, pickles under the lid and ketchup doing its quiet work. Built for the very hungry and the very sure." },
+    garden:  { name: "THE GARDEN",  img: "classicGarden",  desc: "A bright beetroot patty with lettuce, tomato, red onion and garlic mayo. Crunchy, fresh, and not a compromise in sight." }
+  };
+  var detailImg = document.getElementById("detailImg");
+  function showDetail(k) {
+    var d = DETAILS[k]; if (!d || !detailImg) return;
+    detailImg.src = A[d.img] || "";
+    document.getElementById("detailDesc").textContent = d.desc;
+    document.getElementById("detailDiag").textContent = ("DOUBLE GOOD. " + d.name + ". ").repeat(26);
+    document.getElementById("detailLoad").setAttribute("data-preset", k);
+    document.querySelectorAll("[data-classic]").forEach(function (p) {
+      p.classList.toggle("sel", p.getAttribute("data-classic") === k);
+    });
+  }
+  document.querySelectorAll("[data-classic]").forEach(function (p) {
+    p.addEventListener("click", function () { showDetail(p.getAttribute("data-classic")); });
+  });
+  showDetail("classic");
+
   /* ---------- motion: GSAP entrance + scroll reveals (progressive enhancement) ---------- */
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (window.gsap && !reduceMotion) {
