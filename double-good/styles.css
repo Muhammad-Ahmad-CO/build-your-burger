@@ -156,7 +156,7 @@ img{user-select:none;-webkit-user-drag:none}
 @keyframes dropIn{0%{transform:translateY(-52px) scale(1.04);opacity:0}60%{opacity:1}100%{transform:translateY(0) scale(1)}}
 .stack.squash .layer img{animation:squash .22s ease}
 @keyframes squash{40%{transform:scaleY(.93)}}
-.sauce-strip{width:190px;max-width:60vw;height:24px;margin:84px auto -108px;position:relative;z-index:5;flex:none;background-repeat:no-repeat;background-size:100% 100%;filter:drop-shadow(0 3px 3px rgba(29,26,20,.22));cursor:pointer}
+.sauce-strip{width:198px;max-width:62vw;height:44px;margin:58px auto -102px;position:relative;z-index:2;flex:none;background-repeat:no-repeat;background-size:100% 100%;cursor:pointer}
 .comp-hint{position:absolute;top:12px;left:8px;right:8px;z-index:6;font-family:'Baloo 2',cursive;font-weight:700;font-size:15.5px;color:rgba(29,26,20,.55);
   margin:0;text-align:center;pointer-events:none}
 .comp-main.is-empty .comp-hint{top:44%;font-size:17px}

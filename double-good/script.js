@@ -116,15 +116,22 @@
     if (soundOn) { ac(); SFX.side(); }
   });
 
-  /* glossy drizzle: a rounded zigzag stroke with drips + a light highlight */
+  /* reel-style sauce: thick diagonal stripes swept across the top of the layer,
+     slightly arched, with a soft shadow pass and a gloss highlight */
   function drizzleURI(color) {
-    var pts = "M4 9 L20 17 L36 7 L54 18 L70 8 L88 16 L104 7 L122 18 L138 8 L156 17 L172 7 L188 15 L197 10";
-    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 26'>" +
-      "<path d='" + pts + "' fill='none' stroke='" + color + "' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/>" +
-      "<circle cx='20' cy='20' r='3' fill='" + color + "'/><circle cx='88' cy='19' r='2.6' fill='" + color + "'/>" +
-      "<circle cx='122' cy='21' r='3' fill='" + color + "'/><circle cx='172' cy='12' r='2.4' fill='" + color + "'/>" +
-      "<path d='" + pts + "' transform='translate(0,-2.6)' fill='none' stroke='rgba(255,255,255,.40)' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/>" +
-      "</svg>";
+    var stripes = [[26, 36, 74, 8], [62, 39, 110, 10], [98, 40, 146, 12], [134, 38, 180, 13]];
+    function pathFor(dy) {
+      return stripes.map(function (s) {
+        return "M" + s[0] + " " + (s[1] + dy) + " Q " + ((s[0] + s[2]) / 2) + " " + ((s[1] + s[3]) / 2 - 4 + dy) + " " + s[2] + " " + (s[3] + dy);
+      }).join(" ");
+    }
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 44'>" +
+      "<clipPath id='e'><ellipse cx='100' cy='22' rx='97' ry='20'/></clipPath>" +
+      "<g clip-path='url(#e)'>" +
+      "<path d='" + pathFor(2.5) + "' fill='none' stroke='rgba(60,30,0,.20)' stroke-width='12.5' stroke-linecap='round'/>" +
+      "<path d='" + pathFor(0) + "' fill='none' stroke='" + color + "' stroke-width='11' stroke-linecap='round'/>" +
+      "<path d='" + pathFor(-3) + "' fill='none' stroke='rgba(255,255,255,.35)' stroke-width='3.4' stroke-linecap='round'/>" +
+      "</g></svg>";
     return "url('data:image/svg+xml," + encodeURIComponent(svg).replace(/'/g, "%27") + "')";
   }
 
