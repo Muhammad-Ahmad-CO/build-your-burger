@@ -163,6 +163,17 @@
     receiptEl.hidden = !hasItems();
     receiptWaitEl.style.display = hasItems() ? "none" : "block";
 
+    /* tub badges: how many of each ingredient are already in */
+    var byKey = {};
+    layers.forEach(function (l) { if (l.kind === "ing") byKey[l.key] = (byKey[l.key] || 0) + 1; });
+    document.querySelectorAll("#trays .tub").forEach(function (tub) {
+      var n = byKey[tub.getAttribute("data-add")] || 0;
+      var badge = tub.querySelector(".tub-badge");
+      if (badge) { badge.hidden = !n; badge.textContent = "×" + n; }
+      tub.classList.toggle("used", n > 0);
+    });
+    document.querySelector(".comp-main").classList.toggle("is-empty", layers.length === 0);
+
     /* sides resting in the box's side compartment */
     sideDropsEl.innerHTML = Object.keys(sidesOn).map(function (k) {
       return '<img src="' + (A[k] || "") + '" alt="' + SIDES[k].name + '">';
@@ -183,15 +194,39 @@
     render();
   }
 
+  /* click-to-fly: the ingredient visibly flies from its tub/bottle into the box */
+  var reduceMotionQ = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function requestAdd(entry, sourceBtn) {
+    if (sealed() || layers.length >= MAX_ITEMS || reduceMotionQ || !sourceBtn) { addLayer(entry); return; }
+    var img = sourceBtn.querySelector("img");
+    if (!img || !img.getBoundingClientRect) { addLayer(entry); return; }
+    var r = img.getBoundingClientRect();
+    var target = document.querySelector(".comp-main").getBoundingClientRect();
+    var asset = entry.kind === "sauce" ? entry.key : ((ING[entry.key] && ING[entry.key].asset) || entry.key);
+    var clone = document.createElement("img");
+    clone.src = A[asset] || img.src;
+    clone.style.cssText = "position:fixed;z-index:300;pointer-events:none;left:" + r.left + "px;top:" + r.top +
+      "px;width:" + r.width + "px;height:" + r.height + "px;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(29,26,20,.4))";
+    document.body.appendChild(clone);
+    var dx = target.left + target.width / 2 - (r.left + r.width / 2);
+    var dy = target.top + target.height * 0.52 - (r.top + r.height / 2);
+    var anim = clone.animate([
+      { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 },
+      { transform: "translate(" + dx * 0.7 + "px," + (dy - 90) + "px) rotate(-7deg) scale(.92)", opacity: 1, offset: 0.65 },
+      { transform: "translate(" + dx + "px," + dy + "px) rotate(2deg) scale(.8)", opacity: 0.95 }
+    ], { duration: 430, easing: "cubic-bezier(.3,.7,.4,1)" });
+    anim.onfinish = function () { clone.remove(); addLayer(entry); };
+  }
+
   document.getElementById("trays").addEventListener("click", function (e) {
     var b = e.target.closest("[data-add]"); if (!b) return;
     var key = b.getAttribute("data-add"), d = ING[key]; if (!d) return;
-    addLayer({ kind: "ing", key: key, name: d.name, price: d.price });
+    requestAdd({ kind: "ing", key: key, name: d.name, price: d.price }, b);
   });
   document.getElementById("sauces").addEventListener("click", function (e) {
     var b = e.target.closest("[data-sauce]"); if (!b) return;
     var key = b.getAttribute("data-sauce");
-    addLayer({ kind: "sauce", key: key, name: SAUCES[key].name, price: SAUCE_PRICE });
+    requestAdd({ kind: "sauce", key: key, name: SAUCES[key].name, price: SAUCE_PRICE }, b);
   });
   stackEl.addEventListener("click", function (e) {
     var el = e.target.closest("[data-idx]"); if (!el) return;
