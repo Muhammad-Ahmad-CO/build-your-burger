@@ -80,7 +80,7 @@
 
     /* --- hint --- */
     if (sealed()) hintEl.textContent = "Sealed with a top bun — that's a burger! Add a side, or check out. 🍔";
-    else if (layers.length === 0) hintEl.textContent = "Your box is empty — tap something tasty on the left.";
+    else if (layers.length === 0) hintEl.textContent = "Your box is empty — tap or drag something tasty into it.";
     else if (layers.length >= MAX_ITEMS) hintEl.textContent = "That box is FULL. Respect. Time to check out.";
     else hintEl.textContent = layers.length + (layers.length === 1 ? " layer" : " layers") + " in — tap a layer to remove it, or keep stacking.";
 
@@ -121,6 +121,29 @@
     var key = b.getAttribute("data-add"), d = ING[key]; if (!d) return;
     addLayer({ kind: "ing", key: key, name: d.name, price: d.price });
   });
+  /* --- drag & drop: drag a tray or bottle onto the stage --- */
+  var stageEl = document.getElementById("stage");
+  function armDrag(el, payload) {
+    el.setAttribute("draggable", "true");
+    el.addEventListener("dragstart", function (e) {
+      e.dataTransfer.setData("text/plain", payload);
+      e.dataTransfer.effectAllowed = "copy";
+      el.classList.add("dragging");
+    });
+    el.addEventListener("dragend", function () { el.classList.remove("dragging"); stageEl.classList.remove("drop-hot"); });
+  }
+  document.querySelectorAll("#trays .tray").forEach(function (t) { armDrag(t, "ing:" + t.getAttribute("data-add")); });
+  document.querySelectorAll("#sauces .sauce-btn").forEach(function (b) { armDrag(b, "sauce:" + b.getAttribute("data-sauce")); });
+  stageEl.addEventListener("dragover", function (e) { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; stageEl.classList.add("drop-hot"); });
+  stageEl.addEventListener("dragleave", function (e) { if (!stageEl.contains(e.relatedTarget)) stageEl.classList.remove("drop-hot"); });
+  stageEl.addEventListener("drop", function (e) {
+    e.preventDefault(); stageEl.classList.remove("drop-hot");
+    var parts = (e.dataTransfer.getData("text/plain") || "").split(":");
+    if (parts.length !== 2) return;
+    if (parts[0] === "ing" && ING[parts[1]]) addLayer({ kind: "ing", key: parts[1], name: ING[parts[1]].name, price: ING[parts[1]].price });
+    if (parts[0] === "sauce" && SAUCES[parts[1]]) addLayer({ kind: "sauce", key: parts[1], name: SAUCES[parts[1]].name + " drizzle", price: SAUCE_PRICE });
+  });
+
   document.getElementById("sauces").addEventListener("click", function (e) {
     var b = e.target.closest("[data-sauce]"); if (!b) return;
     var key = b.getAttribute("data-sauce");
