@@ -123,7 +123,7 @@ img{user-select:none;-webkit-user-drag:none}
 .sauce-btn[draggable="true"]{cursor:grab}
 .sauce-btn.dragging{opacity:.55}
 .bottle-label{position:absolute;left:50%;top:61.5%;transform:translate(-50%,-50%) rotate(-3deg);
-  font-family:'Baloo 2',cursive;font-weight:800;font-size:12.5px;letter-spacing:-.01em;color:var(--blue);width:92%;overflow:hidden;
+  font-family:'Baloo 2',cursive;font-weight:800;font-size:13.5px;letter-spacing:-.01em;color:var(--blue);width:92%;overflow:hidden;
   white-space:nowrap;pointer-events:none}
 
 /* the open box */
@@ -139,24 +139,24 @@ img{user-select:none;-webkit-user-drag:none}
 .stack{display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;width:100%;flex:1}
 .layer{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;margin:0 0 -104px;position:relative}
 .layer:first-child{margin-bottom:0}
-.layer img{display:block;width:196px;max-width:66vw;margin:0 auto;pointer-events:none;filter:drop-shadow(0 9px 8px rgba(29,26,20,.30));
+.layer img{display:block;width:214px;max-width:66vw;margin:0 auto;pointer-events:none;filter:drop-shadow(0 9px 8px rgba(29,26,20,.30));
   filter:drop-shadow(0 6px 6px rgba(29,26,20,.35))}
-.layer[data-key="patty"]{margin-bottom:-100px}
-.layer[data-key="cheese"]{margin-bottom:-104px}
-.layer[data-key="tomato"]{margin-bottom:-80px}
-.layer[data-key="tomato"] img{width:200px}
-.layer[data-key="lettuce"]{margin-bottom:-108px}
-.layer[data-key="pickles"]{margin-bottom:-82px}
-.layer[data-key="pickles"] img{width:200px}
-.layer[data-key="onion"]{margin-bottom:-124px}
-.layer[data-key="onion"] img{width:196px}
-.layer[data-key="egg"]{margin-bottom:-90px}
-.layer[data-key="topBun"]{margin-bottom:-104px}
+.layer[data-key="patty"]{margin-bottom:-108px}
+.layer[data-key="cheese"]{margin-bottom:-112px}
+.layer[data-key="tomato"]{margin-bottom:-86px}
+.layer[data-key="tomato"] img{width:218px}
+.layer[data-key="lettuce"]{margin-bottom:-116px}
+.layer[data-key="pickles"]{margin-bottom:-88px}
+.layer[data-key="pickles"] img{width:218px}
+.layer[data-key="onion"]{margin-bottom:-132px}
+.layer[data-key="onion"] img{width:214px}
+.layer[data-key="egg"]{margin-bottom:-97px}
+.layer[data-key="topBun"]{margin-bottom:-112px}
 .layer.just-added img{animation:dropIn .38s cubic-bezier(.2,1.6,.4,1)}
 @keyframes dropIn{0%{transform:translateY(-52px) scale(1.04);opacity:0}60%{opacity:1}100%{transform:translateY(0) scale(1)}}
 .stack.squash .layer img{animation:squash .22s ease}
 @keyframes squash{40%{transform:scaleY(.93)}}
-.sauce-strip{width:198px;max-width:62vw;height:58px;margin:3px auto -61px;position:relative;z-index:2;flex:none;background-repeat:no-repeat;background-size:100% 100%;cursor:pointer}
+.sauce-strip{width:212px;max-width:62vw;height:58px;margin:3px auto -61px;position:relative;z-index:2;flex:none;background-repeat:no-repeat;background-size:100% 100%;cursor:pointer}
 .comp-hint{position:absolute;top:12px;left:8px;right:8px;z-index:6;font-family:'Baloo 2',cursive;font-weight:700;font-size:15.5px;color:rgba(29,26,20,.55);
   margin:0;text-align:center;pointer-events:none}
 .comp-main.is-empty .comp-hint{top:44%;font-size:17px}
@@ -278,7 +278,7 @@ img{user-select:none;-webkit-user-drag:none}
 .comp-main.sealed .finished-burger{opacity:1;transform:translateX(-50%) scale(1)}
 .closed-box::after{content:"";position:absolute;inset:12px;border:2px solid rgba(29,26,20,.20);border-radius:13px;pointer-events:none}
 
-.layer[data-key="bunTop"]{margin-bottom:-104px}
+.layer[data-key="bunTop"]{margin-bottom:-112px}
 
 /* v16: a fresh sauce draws itself in, left to right, under the squeezing bottle */
 .sauce-strip.drawing{animation:sauceDraw .55s ease-out both}

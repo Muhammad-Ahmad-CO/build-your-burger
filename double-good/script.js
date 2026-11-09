@@ -149,8 +149,8 @@
         html += '<div class="sauce-strip' + anim + (i === freshSauce ? " drawing" : "") + '" data-idx="' + i + '" title="Tap to remove" style="--sauce:' + SAUCES[l.key].color + ';background-image:' + drizzleURI(SAUCES[l.key].color) + '"></div>';
       } else {
         var asset = (ING[l.key] && ING[l.key].asset) || l.key;
-        var baseW = (l.key === "tomato" || l.key === "pickles") ? 200 : 196;
-        var wdt = Math.max(170, baseW - ingPos * 4); ingPos++;
+        var baseW = (l.key === "tomato" || l.key === "pickles") ? 218 : 214;
+        var wdt = Math.max(182, baseW - ingPos * 4); ingPos++;
         html += '<button type="button" class="layer' + anim + '" data-idx="' + i + '" data-key="' + l.key + '" title="Tap to remove"><img style="width:' + wdt + 'px" src="' + (A[asset] || "") + '" alt="' + l.name + '"></button>';
       }
     });
