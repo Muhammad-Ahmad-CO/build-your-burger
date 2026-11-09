@@ -37,7 +37,7 @@
   /* photographic steel on the hero + counter (the reel's counter is a real
      brushed-steel photo, not a flat gradient) */
   if (A.steelTex) {
-    document.querySelectorAll(".hero, .scene").forEach(function (el) {
+    document.querySelectorAll(".scene").forEach(function (el) {
       el.style.backgroundImage = "linear-gradient(180deg, rgba(255,244,214,.16), rgba(59,36,8,.22)), url(" + A.steelTex + ")";
       el.style.backgroundSize = "cover, cover";
       el.style.backgroundPosition = "center, center";
@@ -122,7 +122,7 @@
   var soundBtn = document.getElementById("soundBtn");
   soundBtn.addEventListener("click", function () {
     soundOn = !soundOn;
-    soundBtn.textContent = soundOn ? "🔊 SOUND ON" : "🔇 SOUND OFF";
+    soundBtn.textContent = soundOn ? "SOUND ON" : "SOUND OFF";
     soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
     if (soundOn) { ac(); SFX.side(); }
   });
@@ -367,6 +367,62 @@
   });
   backdrop.addEventListener("click", function (e) { if (e.target === backdrop) backdrop.hidden = true; });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") backdrop.hidden = true; });
+
+  /* ---------- v22: One-style page furniture ---------- */
+  /* Classics presets: load a ready-made build into the (untouched) builder */
+  var PRESETS = {
+    classic: { name: "The Classic", keys: ["bun", "lettuce", "tomato", "patty", "cheese"], sauce: "mustard" },
+    double:  { name: "The Double",  keys: ["bun", "onion", "patty", "cheese", "patty", "cheese"], sauce: "ketchup" },
+    garden:  { name: "The Garden",  keys: ["bun", "lettuce", "tomato", "pickles", "onion"], sauce: "mayo" }
+  };
+  document.querySelectorAll("[data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var p = PRESETS[btn.getAttribute("data-preset")]; if (!p) return;
+      layers = p.keys.map(function (k) { return { kind: "ing", key: k, name: ING[k].name, price: ING[k].price }; });
+      if (p.sauce) layers.push({ kind: "sauce", key: p.sauce, name: SAUCES[p.sauce].name, price: SAUCE_PRICE });
+      lastAction = layers.length - 1; lastAddedName = p.name; freshSauce = layers.length - 1;
+      render();
+      document.getElementById("builder").scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  /* FAQ accordion */
+  document.querySelectorAll(".tfaq-q").forEach(function (q) {
+    q.addEventListener("click", function () {
+      var row = q.closest(".tfaq-row"), a = row.querySelector(".tfaq-a");
+      var open = row.classList.toggle("open");
+      a.hidden = !open;
+    });
+  });
+
+  /* Manifesto word reveal (grey -> ink as you scroll) */
+  var man = document.getElementById("manifestoText");
+  if (man) {
+    var mWords = man.textContent.trim().split(/\s+/);
+    man.innerHTML = mWords.map(function (w) { return '<span class="w">' + w + "</span>"; }).join(" ");
+    var mSpans = man.querySelectorAll(".w");
+    var mTick = function () {
+      var r = man.getBoundingClientRect(), vh = window.innerHeight || 768;
+      var p = Math.min(1, Math.max(0, (vh * 0.88 - r.top) / (r.height + vh * 0.30)));
+      var n = Math.floor(p * mWords.length);
+      mSpans.forEach(function (el, i) { el.classList.toggle("on", i < n); });
+    };
+    window.addEventListener("scroll", mTick, { passive: true });
+    mTick();
+  }
+
+  /* Session timer: floating widget + timer line (burgers stacked while you read) */
+  var tStart = Date.now();
+  function fmtClock(ms) {
+    var s = Math.floor(ms / 1000), m = Math.floor(s / 60); s = s % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
+  window.setInterval(function () {
+    var el = Date.now() - tStart, secs = Math.floor(el / 1000);
+    var w = document.getElementById("timerWidget"); if (w) w.textContent = fmtClock(el) + "min";
+    var f = document.getElementById("timerLineFigure"); if (f) f.textContent = fmtClock(el);
+    var c = document.getElementById("timerBurgerCount"); if (c) c.textContent = Math.floor(secs / 40);
+  }, 1000);
 
   /* ---------- motion: GSAP entrance + scroll reveals (progressive enhancement) ---------- */
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

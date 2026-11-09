@@ -7,41 +7,47 @@
 <meta name="description" content="DOUBLE GOOD — smash burgers, built by you. Good things come in layers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=21">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Archivo:wght@400;500;600;700;800&family=Michroma&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=22">
 </head>
 <body>
 
-<header class="nav">
-  <a class="logo" href="#top" aria-label="Double Good home">
-    <span class="logo-text">DOUBLE<br>GOOD</span>
-    <span class="logo-tag">SMASH BURGERS,<br>BUILT BY YOU.</span>
-  </a>
-  <nav class="nav-links" aria-label="Main">
-    <a href="#how">HOW IT WORKS</a>
+<header class="tnav">
+  <div class="tnav-left">
+    <button class="tnav-sound" id="soundBtn" type="button" aria-pressed="false">SOUND OFF</button>
+  </div>
+  <nav class="tnav-blocks" aria-label="Main">
+    <a class="tblock tblock-light" href="#builder">BUILD YOURS. &darr;</a>
+    <a class="tblock tblock-dark" href="#classics">THE CLASSICS. &darr;</a>
+    <a class="tblock tblock-red" href="#top">DOUBLE GOOD.</a>
   </nav>
-  <button class="btn btn-ghost btn-small" id="soundBtn" type="button" aria-pressed="false">🔇 SOUND OFF</button>
 </header>
 
 <main id="top">
 
-  <!-- ============ HERO: the closed box ============ -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-copy">
-        <h1>Good things<br>come in<br><span class="hl">layers.</span></h1>
-        <p class="hero-sub">A little messy. A lot of good.<br>Build your burger, sauce it up and pick a side.</p>
-        <a class="btn btn-blue btn-big" href="#builder" id="openBtn">OPEN FOR SOMETHING GOOD ✓</a>
-      </div>
-      <div class="hero-visual">
-        <div class="closed-box" aria-hidden="true">
-          <svg class="cb-doodle cb-left" viewBox="0 0 100 100"><g fill="none" stroke="#E63329" stroke-width="4" stroke-linecap="round"><path d="M18 44 a32 22 0 0 1 64 0 z" fill="#E63329" fill-opacity=".12"/><path d="M14 52 h72"/><path d="M20 62 q10 8 20 0 q10 8 20 0 q10 8 20 0"/><path d="M24 76 h52"/><path d="M30 26 l-4 -8 M50 22 v-10 M70 26 l4 -8"/></g></svg>
-          <div class="cb-logo">DOUBLE<br>GOOD</div>
-          <div class="cb-sub">BUILD YOUR BURGER</div>
-          <svg class="cb-hand" viewBox="0 0 100 100"><path d="M35 92 V52 a6 6 0 0 1 12 0 V30 a6 6 0 0 1 12 0 v-6 a6 6 0 0 1 12 0 v8 a6 6 0 0 1 12 0 v26 c0 20 -12 34 -28 34 c-9 0 -15 -3 -20 -9 z" fill="#E63329" stroke="#B31B14" stroke-width="3" stroke-linejoin="round"/></svg>
-          <svg class="cb-doodle cb-right" viewBox="0 0 100 100"><g fill="none" stroke="#E63329" stroke-width="4" stroke-linecap="round"><path d="M18 44 a32 22 0 0 1 64 0 z" fill="#E63329" fill-opacity=".12"/><path d="M14 52 h72"/><path d="M20 62 q10 8 20 0 q10 8 20 0 q10 8 20 0"/><path d="M24 76 h52"/><path d="M30 26 l-4 -8 M50 22 v-10 M70 26 l4 -8"/></g></svg>
-        </div>
-      </div>
+  <!-- ============ HERO (One-style) ============ -->
+  <section class="thero">
+    <img class="thero-img" data-asset="finishedBurger" alt="A Double Good burger">
+    <h1 class="thero-h1">GOOD THINGS COME IN LAYERS.</h1>
+    <div class="thero-strip">
+      <a class="tcell" href="#builder">Build yours. &darr;</a>
+      <a class="tcell" href="#classics">The classics. &darr;</a>
+      <div class="tcell tcell-mark">DOUBLE GOOD.</div>
+    </div>
+  </section>
+
+  <!-- ============ MANIFESTO ============ -->
+  <section class="tmanifesto">
+    <p class="tbig" id="manifestoText">We like making lunch simpler. One counter, a handful of good things, and your own two hands. No twenty-minute menu, no wrong answers — just layers, sauce, and a side if you fancy one. Double Good is easy to recommend, because the burger is exactly the one you would have made. Built by you. Perfect, for not overthinking.</p>
+    <div class="treceipt" aria-hidden="true">
+      <div class="treceipt-head">DOUBLEGOOD.KITCHEN</div>
+      <div class="treceipt-line"><span>Brioche bun</span><span>$1.00</span></div>
+      <div class="treceipt-line"><span>Smash patty</span><span>$3.50</span></div>
+      <div class="treceipt-line"><span>Cheddar</span><span>$1.20</span></div>
+      <div class="treceipt-line"><span>House sauce</span><span>$0.60</span></div>
+      <div class="treceipt-line"><span>Fries</span><span>$2.90</span></div>
+      <div class="treceipt-total">$9.20</div>
+      <div class="treceipt-barcode"></div>
     </div>
   </section>
 
@@ -131,19 +137,109 @@
     </div>
   </section>
 
-  <!-- ============ HOW IT WORKS ============ -->
-  <section class="how" id="how">
-    <h2>How it <span class="hl-blue">works</span></h2>
-    <div class="how-steps">
-      <div class="how-step"><span class="how-num">1</span><h3>Open the box</h3><p>Hit the big yellow box up top and step up to the counter.</p></div>
-      <div class="how-step"><span class="how-num">2</span><h3>Build it</h3><p>Click or drag layers into the box, sauce it up, and pick a side — your receipt prints as you go.</p></div>
-      <div class="how-step"><span class="how-num">3</span><h3>Good food, your way</h3><p>Top it off, check out on the receipt, and it's on its way — still warm, still stacked.</p></div>
+  <!-- ============ THE CLASSICS ============ -->
+  <section class="tclassics" id="classics">
+    <h2 class="th2">A DOUBLE GOOD FOR EVERY MOOD.</h2>
+    <div class="trow3">
+      <article class="tpanel">
+        <img data-asset="finishedBurger" alt="The Classic burger">
+        <p class="tpanel-desc">Smash patty, cheddar, lettuce, tomato and house sauce. The one that started it.</p>
+        <div class="tpanel-foot"><button class="tload" data-preset="classic" type="button">Load it in the builder &darr;</button><span class="tpanel-name">The Classic.</span></div>
+      </article>
+      <article class="tpanel">
+        <img data-asset="classicDouble" alt="The Double burger">
+        <p class="tpanel-desc">Two patties, double cheddar, pickles under the lid and ketchup. No regrets.</p>
+        <div class="tpanel-foot"><button class="tload" data-preset="double" type="button">Load it in the builder &darr;</button><span class="tpanel-name">The Double.</span></div>
+      </article>
+      <article class="tpanel">
+        <img data-asset="classicGarden" alt="The Garden burger">
+        <p class="tpanel-desc">Beetroot patty, lettuce, tomato, red onion and garlic mayo. Bright and crunchy.</p>
+        <div class="tpanel-foot"><button class="tload" data-preset="garden" type="button">Load it in the builder &darr;</button><span class="tpanel-name">The Garden.</span></div>
+      </article>
     </div>
   </section>
 
-  <footer class="footer">
-    <span class="logo-text foot-logo">DOUBLE GOOD</span>
-    <p>Good things come in layers. A concept experience — no real burgers were delivered.</p>
+  <!-- ============ EXPLODED ============ -->
+  <section class="texploded">
+    <div class="tband"><h2>SIMPLE. DIRECT. AS IT SHOULD BE.</h2></div>
+    <div class="texp-stage">
+      <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">TOP BUN</div><div class="texp-sub">BAKED EVERY MORNING</div></div><span class="texp-line"></span></div><img data-asset="topBun" alt="Top bun"><div></div></div>
+      <div class="texp-row"><div></div><img data-asset="cheese" alt="Cheddar"><div class="texp-lab r"><span class="texp-line"></span><div><div class="texp-name">CHEDDAR</div><div class="texp-sub">PROPERLY MELTED</div></div></div></div>
+      <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">SMASH PATTY</div><div class="texp-sub">SMASHED TO ORDER</div></div><span class="texp-line"></span></div><img data-asset="patty" alt="Smash patty"><div></div></div>
+      <div class="texp-row"><div></div><img data-asset="lettuce" alt="Lettuce"><div class="texp-lab r"><span class="texp-line"></span><div><div class="texp-name">LETTUCE</div><div class="texp-sub">CRISP AND COLD</div></div></div></div>
+      <div class="texp-row"><div class="texp-lab l"><div><div class="texp-name">THE HEEL</div><div class="texp-sub">HOLDS IT ALL TOGETHER</div></div><span class="texp-line"></span></div><img data-asset="bunBottom" alt="Bun heel"><div></div></div>
+    </div>
+  </section>
+
+  <!-- ============ SPECS ============ -->
+  <section class="tspecs">
+    <h2 class="th2 huge">THE TECHNICAL SPECIFICATIONS.</h2>
+    <div class="tspec-grid">
+      <div class="tspec-group"><h3>Approx. weight (&plusmn;5g)</h3>
+        <div class="tspec-row"><span>Full build</span><span>285g.</span></div>
+        <div class="tspec-row"><span>Fries</span><span>150g.</span></div>
+        <div class="tspec-row"><span>Sauce, per squeeze</span><span>30ml.</span></div>
+      </div>
+      <div class="tspec-group"><h3>Total energy, build + fries (&plusmn;20kcal)</h3>
+        <div class="tspec-row"><span>The Classic build</span><span>910 kcal.</span></div>
+        <div class="tspec-row"><span>The Double build</span><span>1,180 kcal.</span></div>
+        <div class="tspec-row"><span>The Garden build</span><span>640 kcal.</span></div>
+      </div>
+      <div class="tspec-group"><h3>Average times</h3>
+        <div class="tspec-row"><span>Your build, start to sealed</span><span>1&ndash;3 min.</span></div>
+        <div class="tspec-row"><span>Full prep, from order</span><span>5&ndash;8 min.</span></div>
+        <div class="tspec-row"><span>Order accepted in</span><span>15&ndash;40 sec.</span></div>
+      </div>
+      <div class="tspec-group"><h3>Best enjoyed</h3>
+        <div class="tspec-row"><span>At the counter</span><span>At once.</span></div>
+        <div class="tspec-row"><span>From stacking, eat within</span><span>&lt;30 min.</span></div>
+        <div class="tspec-row"><span>Takeaway, warm bag</span><span>&lt;50 min.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICE STATEMENT ============ -->
+  <section class="tprice">
+    <p class="tbig static">Layers from $0.50. A whole burger, built your way, for less than the boring lunch you were about to buy anyway. Sauces are $0.60. Sides, only if you want them.</p>
+  </section>
+
+  <!-- ============ HOW IT WORKS (kept, restated plainly) ============ -->
+  <section class="thow" id="how">
+    <div class="tband"><h2>HOW IT WORKS.</h2></div>
+    <div class="thow-grid">
+      <div class="thow-step"><span class="thow-num">1.</span><p>Step up to the counter. The box is open and the tubs are full.</p></div>
+      <div class="thow-step"><span class="thow-num">2.</span><p>Click or drag layers in, squeeze a sauce, pick a side. The receipt prints as you go.</p></div>
+      <div class="thow-step"><span class="thow-num">3.</span><p>Top it off, check out on the receipt, and it is on its way — still warm, still stacked.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="tfaq" id="faq">
+    <h3 class="tfaq-intro">Any questions? Read our FAQ&rsquo;s</h3>
+    <div class="tfaq-row"><button class="tfaq-q" type="button">What is Double Good?<span class="tfaq-chev">&darr;</span></button><div class="tfaq-a" hidden><p>A smash burger you build yourself, layer by layer, at one simple counter. Fewer decisions, better burger.</p></div></div>
+    <div class="tfaq-row"><button class="tfaq-q" type="button">How do I build one?<span class="tfaq-chev">&darr;</span></button><div class="tfaq-a" hidden><p>Scroll to the builder, click a tub (or drag from it) to stack a layer, squeeze a sauce bottle over the box, and finish with &ldquo;Top it off&rdquo;. Your receipt prints on the left as you go.</p></div></div>
+    <div class="tfaq-row"><button class="tfaq-q" type="button">How much does it cost?<span class="tfaq-chev">&darr;</span></button><div class="tfaq-a" hidden><p>Exactly what you stack. Layers run from $0.50 to $3.50, sauces are $0.60 and sides $2.90&ndash;$3.40. The receipt never lies.</p></div></div>
+    <div class="tfaq-row"><button class="tfaq-q" type="button">Can I take a layer off again?<span class="tfaq-chev">&darr;</span></button><div class="tfaq-a" hidden><p>Yes. Tap any layer in the box to remove it, or use Undo. Nothing is final until you check out.</p></div></div>
+    <div class="tfaq-row"><button class="tfaq-q" type="button">Do I have to pick a side?<span class="tfaq-chev">&darr;</span></button><div class="tfaq-a" hidden><p>No. Fries, onion rings and curly fries are there if you want them. Share them, save them, skip them.</p></div></div>
+    <div class="tfaq-row"><button class="tfaq-q" type="button">Is this a real restaurant?<span class="tfaq-chev">&darr;</span></button><div class="tfaq-a" hidden><p>Not yet. Double Good is a concept experience — no real burgers were delivered. But it is very serious about layers.</p></div></div>
+  </section>
+
+  <!-- ============ TIMER LINE ============ -->
+  <section class="ttimer">
+    <p class="ttimer-1">You have been here <span class="tred" id="timerLineFigure">00:00</span>min.</p>
+    <p class="ttimer-2">In that time, we have stacked <span id="timerBurgerCount">0</span> burgers. What are you waiting for?</p>
+  </section>
+
+  <footer class="tfooter">
+    <div class="tfooter-contact">
+      <p>Built on the web.</p>
+      <p>@doublegood</p>
+      <p>hello@doublegood.kitchen</p>
+    </div>
+    <div class="tfooter-bottom">
+      <nav class="tfooter-links"><a href="#builder">Build</a><a href="#classics">Classics</a><a href="#faq">FAQ</a></nav>
+      <span class="tfooter-mark">DOUBLE GOOD.</span>
+    </div>
   </footer>
 </main>
 
@@ -158,10 +254,12 @@
   </div>
 </div>
 
+<div class="ttimer-widget" aria-hidden="true"><span class="ttimer-dot"></span><span id="timerWidget">00:00min</span></div>
+
 <div id="handCursor" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M35 92 V52 a6 6 0 0 1 12 0 V30 a6 6 0 0 1 12 0 v-6 a6 6 0 0 1 12 0 v8 a6 6 0 0 1 12 0 v26 c0 20 -12 34 -28 34 c-9 0 -15 -3 -20 -9 z" fill="#E63329" stroke="#1D1A14" stroke-width="4" stroke-linejoin="round"/></svg></div>
-<script src="assets-data.js?v=21"></script>
+<script src="assets-data.js?v=22"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="script.js?v=21"></script>
+<script src="script.js?v=22"></script>
 </body>
 </html>
