@@ -350,11 +350,15 @@
   var backdrop = document.getElementById("modalBackdrop");
   document.getElementById("checkoutBtn").addEventListener("click", function () {
     if (!hasItems()) { SFX.buzz(); return; }
-    var no = "DG-" + Math.floor(1000 + Math.random() * 9000);
-    document.getElementById("successText").textContent =
-      "Order " + no + " — your " + layers.length + "-layer build" +
-      (Object.keys(sidesOn).length ? " with " + Object.keys(sidesOn).map(function (k) { return SIDES[k].name; }).join(" + ") : "") +
-      " (" + money(total()) + ") is on the grill. Ready in ~15 min.";
+    var lines = layers.map(function (l) { return { n: l.name, p: l.price }; });
+    Object.keys(sidesOn).forEach(function (k) { lines.push({ n: SIDES[k].name, p: SIDES[k].price }); });
+    var shown = lines.slice(0, 6);
+    var html = shown.map(function (l) {
+      return '<div class="card-line"><span>' + l.n + '</span><span>' + money(l.p) + "</span></div>";
+    }).join("");
+    if (lines.length > shown.length) html += '<div class="card-line dim"><span>+ ' + (lines.length - shown.length) + " more</span><span></span></div>";
+    document.getElementById("successLines").innerHTML = html;
+    document.getElementById("successTotal").textContent = money(total());
     backdrop.hidden = false; SFX.jingle();
   });
   document.getElementById("successClose").addEventListener("click", function () {

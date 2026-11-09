@@ -286,3 +286,13 @@ img{user-select:none;-webkit-user-drag:none}
 
 /* v18: no placeholder note — the reel's counter is bare until the receipt prints */
 .receipt-wait{display:none}
+
+/* v19: checkout card like the reel's — blurred bright scene behind, order lines, total, full-width button */
+.modal-backdrop{background:rgba(30,24,10,.30);backdrop-filter:blur(7px) saturate(1.05);-webkit-backdrop-filter:blur(7px) saturate(1.05)}
+.card{text-align:left;transform:rotate(-1.6deg)}
+.card .btn-big{width:100%}
+#successLines{margin:14px 0 2px;border-top:2px dashed rgba(29,26,20,.35);padding-top:10px}
+.card-line{display:flex;justify-content:space-between;gap:14px;font-size:14.5px;font-weight:600;color:rgba(29,26,20,.85);line-height:1.75}
+.card-line.dim{opacity:.6}
+.card-total{display:flex;justify-content:space-between;font-size:19px;font-weight:800;border-top:2px dashed rgba(29,26,20,.35);margin-top:8px;padding-top:10px}
+.card-note{font-size:14px}
