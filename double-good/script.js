@@ -34,6 +34,16 @@
     if (src) img.src = src;
   });
 
+  /* photographic steel on the hero + counter (the reel's counter is a real
+     brushed-steel photo, not a flat gradient) */
+  if (A.steelTex) {
+    document.querySelectorAll(".hero, .scene").forEach(function (el) {
+      el.style.backgroundImage = "linear-gradient(180deg, rgba(255,244,214,.16), rgba(59,36,8,.22)), url(" + A.steelTex + ")";
+      el.style.backgroundSize = "cover, cover";
+      el.style.backgroundPosition = "center, center";
+    });
+  }
+
   var stackEl = document.getElementById("stack");
   var hintEl = document.getElementById("stageHint");
   var compHintEl = document.getElementById("compHint");
@@ -188,7 +198,7 @@
     linesEl.innerHTML = li;
     totalEl.textContent = money(total());
     receiptEl.hidden = !hasItems();
-    receiptWaitEl.style.display = hasItems() ? "none" : "block";
+    receiptWaitEl.style.display = "none"; /* the reel's counter stays bare until the receipt prints */
 
     /* tub badges: how many of each ingredient are already in */
     var byKey = {};

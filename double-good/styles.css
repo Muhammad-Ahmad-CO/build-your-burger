@@ -283,3 +283,6 @@ img{user-select:none;-webkit-user-drag:none}
 /* v16: a fresh sauce draws itself in, left to right, under the squeezing bottle */
 .sauce-strip.drawing{animation:sauceDraw .55s ease-out both}
 @keyframes sauceDraw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+/* v18: no placeholder note — the reel's counter is bare until the receipt prints */
+.receipt-wait{display:none}
