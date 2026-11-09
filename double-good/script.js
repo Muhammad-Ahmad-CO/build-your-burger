@@ -51,18 +51,61 @@
   }
   function sealed() { return layers.length > 0 && layers[layers.length - 1].key === "topBun"; }
 
-  /* tiny pop sound, synthesized — no audio files */
-  var actx = null;
-  function pop(freq) {
+  /* ---- synthesized sound design (Web Audio, no files). Default OFF. ---- */
+  var soundOn = false, actx = null, master = null;
+  function ac() {
+    if (!actx) {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      master = actx.createGain(); master.gain.value = 0.5; master.connect(actx.destination);
+    }
+    if (actx.state === "suspended") actx.resume();
+    return actx;
+  }
+  function tone(freqA, freqB, dur, type, vol, delay) {
+    if (!soundOn) return;
     try {
-      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
-      o.type = "sine"; o.frequency.setValueAtTime(freq || 520, t);
-      o.frequency.exponentialRampToValueAtTime(180, t + 0.09);
-      g.gain.setValueAtTime(0.16, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.11);
+      var c = ac(), t = c.currentTime + (delay || 0);
+      var o = c.createOscillator(), g = c.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(freqA, t);
+      o.frequency.exponentialRampToValueAtTime(Math.max(freqB, 1), t + dur);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
     } catch (e) { /* sound is a bonus, never a blocker */ }
   }
+  function noiseHit(dur, freqA, freqB, vol, delay) {
+    if (!soundOn) return;
+    try {
+      var c = ac(), t = c.currentTime + (delay || 0);
+      var len = Math.max(1, (dur * c.sampleRate) | 0), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      var src = c.createBufferSource(); src.buffer = buf;
+      var f = c.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 1.1;
+      f.frequency.setValueAtTime(freqA, t); f.frequency.exponentialRampToValueAtTime(freqB, t + dur);
+      var g = c.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      src.connect(f); f.connect(g); g.connect(master); src.start(t);
+    } catch (e) { /* ignore */ }
+  }
+  var SFX = {
+    land: function (key) {           /* a layer lands in the box */
+      if (key === "patty") { tone(300, 120, 0.12, "sine", 0.5); noiseHit(0.08, 500, 200, 0.25); }
+      else if (key === "topBun") { tone(420, 160, 0.13, "sine", 0.4); tone(660, 660, 0.07, "triangle", 0.18, 0.05); }
+      else { tone(540, 200, 0.09, "sine", 0.32); noiseHit(0.05, 1200, 600, 0.10); }
+    },
+    squirt: function () { noiseHit(0.22, 2200, 500, 0.30); tone(300, 140, 0.16, "sine", 0.10); },
+    remove: function () { tone(300, 520, 0.08, "sine", 0.22); },
+    side: function () { tone(620, 620, 0.06, "triangle", 0.25); tone(790, 790, 0.07, "triangle", 0.25, 0.07); noiseHit(0.06, 2600, 1800, 0.12); },
+    buzz: function () { tone(130, 110, 0.14, "square", 0.12); },
+    jingle: function () { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, f, 0.16, "triangle", 0.28, i * 0.09); }); noiseHit(0.2, 3200, 2400, 0.08, 0.36); }
+  };
+  var soundBtn = document.getElementById("soundBtn");
+  soundBtn.addEventListener("click", function () {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊 SOUND ON" : "🔇 SOUND OFF";
+    soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    if (soundOn) { ac(); SFX.side(); }
+  });
+  function pop() { /* legacy no-op: all sounds route through SFX now */ }
 
   function render() {
     /* --- the stack in the box --- */
@@ -108,11 +151,11 @@
   }
 
   function addLayer(entry) {
-    if (layers.length >= MAX_ITEMS) { hintEl.textContent = "That box is FULL. Respect. Time to check out."; return; }
-    if (sealed()) { hintEl.textContent = "Top bun is on! Tap the top bun in the box to take it off first."; stackEl.classList.remove("squash"); void stackEl.offsetWidth; stackEl.classList.add("squash"); return; }
+    if (layers.length >= MAX_ITEMS) { hintEl.textContent = "That box is FULL. Respect. Time to check out."; SFX.buzz(); return; }
+    if (sealed()) { hintEl.textContent = "Top bun is on! Tap the top bun in the box to take it off first."; stackEl.classList.remove("squash"); void stackEl.offsetWidth; stackEl.classList.add("squash"); SFX.buzz(); return; }
     if (entry.key === "topBun" && layers.some(function (l) { return l.key === "topBun"; })) return;
     layers.push(entry); lastAction = layers.length - 1;
-    pop(entry.kind === "sauce" ? 700 : 500);
+    if (entry.kind === "sauce") SFX.squirt(); else SFX.land(entry.key);
     render();
   }
 
@@ -152,16 +195,16 @@
   stackEl.addEventListener("click", function (e) {
     var el = e.target.closest("[data-idx]"); if (!el) return;
     layers.splice(parseInt(el.getAttribute("data-idx"), 10), 1);
-    pop(300); render();
+    SFX.remove(); render();
   });
   linesEl.addEventListener("click", function (e) {
     var x = e.target.closest("[data-side-off]"); if (!x) return;
-    delete sidesOn[x.getAttribute("data-side-off")]; syncSideCards(); pop(300); render();
+    delete sidesOn[x.getAttribute("data-side-off")]; syncSideCards(); SFX.remove(); render();
   });
   document.querySelectorAll(".side-card").forEach(function (card) {
     card.addEventListener("click", function () {
       var k = card.getAttribute("data-side");
-      if (sidesOn[k]) delete sidesOn[k]; else { sidesOn[k] = true; pop(620); }
+      if (sidesOn[k]) { delete sidesOn[k]; SFX.remove(); } else { sidesOn[k] = true; SFX.side(); }
       syncSideCards(); render();
     });
   });
@@ -173,10 +216,10 @@
     });
   }
   document.getElementById("undoBtn").addEventListener("click", function () {
-    if (!layers.length) return; layers.pop(); pop(300); render();
+    if (!layers.length) return; layers.pop(); SFX.remove(); render();
   });
   document.getElementById("resetBtn").addEventListener("click", function () {
-    layers = []; sidesOn = {}; syncSideCards(); pop(260); render();
+    layers = []; sidesOn = {}; syncSideCards(); SFX.remove(); render();
   });
 
   /* ---------- checkout ---------- */
@@ -217,8 +260,41 @@
       "Thanks, " + name + " — order " + no + " confirmed: your " + layers.length + "-layer build (" + money(total()) +
       ") is on the grill and heading to " + addr + ".";
     bodyEl.hidden = true; successEl.hidden = false;
-    pop(880);
+    SFX.jingle();
   });
+
+  /* ---------- motion: GSAP entrance + scroll reveals (progressive enhancement) ---------- */
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (window.gsap && !reduceMotion) {
+    gsap.from(".hero-copy > *", { y: 34, opacity: 0, stagger: 0.09, duration: 0.7, ease: "power3.out" });
+    gsap.from(".hero-visual", { scale: 0.92, rotate: 2.5, opacity: 0, duration: 0.85, ease: "back.out(1.4)", delay: 0.15 });
+    if (window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray(".tray-panel, .stage-wrap, .order-panel, .side-card, .how-step").forEach(function (el) {
+        gsap.from(el, { y: 36, opacity: 0, duration: 0.6, ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 90%" } });
+      });
+    }
+  }
+
+  /* ---------- red hand cursor that follows you inside the stage ---------- */
+  if (window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches && !reduceMotion) {
+    document.body.classList.add("hand-on");
+    var hand = document.getElementById("handCursor");
+    var hx = -100, hy = -100, tx = -100, ty = -100, handLive = false;
+    stageEl.addEventListener("mousemove", function (e) {
+      tx = e.clientX; ty = e.clientY;
+      hand.style.opacity = "1";
+      hand.classList.toggle("big", !!e.target.closest(".layer, .sauce-strip"));
+      if (!handLive) { handLive = true; requestAnimationFrame(handTick); }
+    });
+    stageEl.addEventListener("mouseleave", function () { hand.style.opacity = "0"; handLive = false; });
+    function handTick() {
+      hx += (tx - hx) * 0.35; hy += (ty - hy) * 0.35;
+      hand.style.transform = "translate(" + (hx - 8) + "px," + (hy - 4) + "px) rotate(-8deg)";
+      if (handLive) requestAnimationFrame(handTick);
+    }
+  }
 
   render();
 })();

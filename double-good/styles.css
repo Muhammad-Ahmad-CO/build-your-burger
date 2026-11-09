@@ -216,7 +216,13 @@ img{user-select:none;-webkit-user-drag:none}
 /* ---------- hand cursor in the builder ---------- */
 @media (hover:hover) and (pointer:fine){
   .stage, .stage .layer, .stage .sauce-strip{cursor:pointer}
+  body.hand-on .stage, body.hand-on .stage .layer, body.hand-on .stage .sauce-strip{cursor:none}
 }
+#handCursor{position:fixed;left:0;top:0;width:46px;height:46px;z-index:200;pointer-events:none;
+  opacity:0;transition:opacity .18s ease;will-change:transform;
+  filter:drop-shadow(2px 3px 3px rgba(29,26,20,.35))}
+#handCursor.big{width:58px;height:58px}
+#soundBtn{margin-left:4px}
 
 /* ---------- responsive ---------- */
 @media (max-width:1020px){
